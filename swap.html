@@ -6,23 +6,251 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://terminal.jup.ag/main-v2.js"></script>
   <style>
-    body{font-family:system-ui;margin:0;background:#0b0f19;color:#fff}
-    .wrap{max-width:960px;margin:24px auto;padding:16px}
-    .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-    .pill{background:#141a2a;border:1px solid #223055;border-radius:999px;padding:6px 10px;font-size:12px}
-    .btn{background:#1b2a4d;border:1px solid #223055;border-radius:10px;padding:10px 14px;cursor:pointer}
-    a{color:#9fc3ff;text-decoration:none}
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #8b5cf6;
+      --dark: #0f172a;
+      --darker: #0b0f19;
+      --light: #f1f5f9;
+      --gray: #94a3b8;
+      --success: #10b981;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, var(--darker), var(--dark));
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      padding: 30px 20px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .tagline {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+    
+    .cashback-badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .pair-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .pair-label {
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+    
+    .pair-value {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    
+    .config-info {
+      display: flex;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 30px;
+      font-size: 0.9rem;
+    }
+    
+    .config-item {
+      text-align: center;
+    }
+    
+    .config-label {
+      color: var(--gray);
+      margin-bottom: 5px;
+    }
+    
+    .config-value {
+      font-weight: 600;
+    }
+    
+    .swap-button {
+      width: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 18px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+      margin-bottom: 20px;
+    }
+    
+    .swap-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    }
+    
+    .swap-button:active {
+      transform: translateY(0);
+    }
+    
+    .params-info {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--gray);
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+    }
+    
+    .params-code {
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      margin-top: 5px;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.8rem;
+      color: var(--gray);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .powered-by {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        border-radius: 15px;
+      }
+      
+      .header {
+        padding: 20px 15px;
+      }
+      
+      .logo {
+        font-size: 2rem;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="row">
-      <div><strong>GasBack Lite</strong> — <span id="pair">…</span></div>
-      <div class="pill" id="cfg">slip: –, fee: – bps</div>
+  <div class="container">
+    <div class="header">
+      <div class="logo">GasBack Lite</div>
+      <div class="tagline">Swap on Solana with automatic cashback</div>
+      <div class="cashback-badge">Earn USDC cashback on every swap!</div>
     </div>
-    <div class="row">
-      <button class="btn" id="open">Open Swap</button>
-      <div style="opacity:.75;font-size:12px">Params: <code>?in=…&out=…&amt=0.5&slip=75&feeBps=10</code></div>
+    
+    <div class="content">
+      <div class="pair-info">
+        <div class="pair-label">Trading Pair</div>
+        <div class="pair-value" id="pair">...</div>
+      </div>
+      
+      <div class="config-info">
+        <div class="config-item">
+          <div class="config-label">Slippage</div>
+          <div class="config-value" id="slippage">-</div>
+        </div>
+        <div class="config-item">
+          <div class="config-label">Fee</div>
+          <div class="config-value" id="fee">- bps</div>
+        </div>
+        <div class="config-item">
+          <div class="config-label">Cashback</div>
+          <div class="config-value" id="cashback">0.10%</div>
+        </div>
+      </div>
+      
+      <button class="swap-button" id="open">
+        🔥 Start Swapping
+      </button>
+      
+      <div class="params-info">
+        <div>Advanced parameters:</div>
+        <div class="params-code">?in=...&out=...&amt=0.5&slip=75&feeBps=10</div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <div>Powered by Jupiter Terminal</div>
+      <div class="powered-by">
+        <span>Ref: www.whtg1.com</span>
+      </div>
     </div>
   </div>
 
@@ -37,7 +265,10 @@
   const ref     = "www.whtg1.com"; // Paramètre de référence pour pointer vers www.whtg1.com
 
   document.getElementById("pair").textContent = short(inMint)+" → "+short(outMint);
-  document.getElementById("cfg").textContent  = `slip: ${slip} bps, fee: ${feeBps} bps`;
+  document.getElementById("slippage").textContent = slip + " bps";
+  document.getElementById("fee").textContent = feeBps + " bps";
+  // Le cashback est de 0.10% (10 bps) par défaut
+  document.getElementById("cashback").textContent = "0.10%";
 
   const RPCS = [
     "https://solana-rpc.publicnode.com",
