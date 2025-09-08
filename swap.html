@@ -2,58 +2,76 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>GasBack Lite — Swap</title>
+  <title>GasBack Lite — Swap (debug)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Jupiter Terminal -->
   <script src="https://terminal.jup.ag/main-v2.js"></script>
   <style>
     body{font-family:system-ui;margin:0;background:#0b0f19;color:#fff}
-    .wrap{max-width:900px;margin:24px auto;padding:16px}
-    .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .wrap{max-width:960px;margin:24px auto;padding:16px}
     .pill{background:#141a2a;border:1px solid #223055;border-radius:999px;padding:6px 10px;font-size:12px}
-    #t{height:560px}
+    #term{min-height:600px}
+    #dbg{white-space:pre-wrap;font:12px/1.4 ui-monospace,Menlo,monospace;background:#111;color:#9fc3ff;padding:8px;border-radius:8px;border:1px solid #223055}
+    a{color:#9fc3ff}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="bar">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div><strong>GasBack Lite</strong> — <span id="pair">…</span></div>
       <div class="pill" id="cfg">slip: –, fee: – bps</div>
     </div>
-    <div id="t"></div>
+    <div id="term"></div>
+    <div id="dbg" style="margin-top:12px;display:none"></div>
   </div>
 
 <script>
 (function(){
+  const log = (...args) => {
+    console.log(...args);
+    const el = document.getElementById('dbg');
+    el.style.display = 'block';
+    el.textContent += args.map(x => (typeof x==='string'?x:JSON.stringify(x,null,2))).join(' ') + "\n";
+  };
+
+  window.addEventListener('error', e => log('window.error:', e.message || e));
+  window.addEventListener('unhandledrejection', e => log('unhandledrejection:', e.reason?.message || String(e.reason)));
+
   const qs = new URLSearchParams(location.search);
   const inMint  = qs.get("in")  || "So11111111111111111111111111111111111111112"; // SOL
   const outMint = qs.get("out") || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC
-  const amt     = qs.get("amt") || "0.10"; // quantité "humaine" du token IN
-  const slip    = parseInt(qs.get("slip") || "50", 10);  // 50 bps = 0.5%
-  const feeBps  = parseInt(qs.get("feeBps") || "10", 10); // 10 bps = 0.1%
+  const amt     = qs.get("amt") || "0.10";
+  const slip    = parseInt(qs.get("slip") || "50",10);
+  const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
 
   document.getElementById("pair").textContent = short(inMint)+" → "+short(outMint);
   document.getElementById("cfg").textContent  = `slip: ${slip} bps, fee: ${feeBps} bps`;
 
-  // ⚠️ Pour ENCaisser réellement les fees, il faut déclarer vos feeAccounts (ATA par mint).
-  // Pour démarrer sans encaissement (tests), laissez feeAccounts: {}.
-  window.Jupiter.init({
-    container: document.getElementById("t"),
-    displayMode: "integrated",
-    integrated: true,
-    endpoint: "https://api.mainnet-beta.solana.com",
-    defaultInputMint: inMint,
-    defaultOutputMint: outMint,
-    defaultInputAmount: amt.toString(),
-    slippageBps: slip,
-    platformFeeAndAccounts: {
-      feeBps: feeBps,
-      feeAccounts: {
-        // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "<VOTRE_ATA_USDC>", // à renseigner quand prêt
-        // Ajoutez d'autres mints si besoin
-      }
-    }
-  });
+  if (!window.Jupiter) {
+    log("Jupiter non chargé. Un bloqueur ou une erreur réseau empêche 'https://terminal.jup.ag/main-v2.js'.");
+    return;
+  }
+
+  try {
+    const FEE_ACCOUNTS = {
+      // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "TON_ATA_USDC_ICI"
+    };
+
+    window.Jupiter.init({
+      container: document.getElementById("term"),
+      displayMode: "integrated",
+      integrated: true,
+      endpoint: "https://api.mainnet-beta.solana.com",
+      defaultInputMint: inMint,
+      defaultOutputMint: outMint,
+      defaultInputAmount: amt.toString(),
+      slippageBps: slip,
+      platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
+    });
+
+    log("Jupiter.init() appelé OK");
+  } catch (err) {
+    log("Erreur pendant init:", err && (err.message || err));
+  }
 
   function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
 })();
