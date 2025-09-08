@@ -1,237 +1,275 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>GasBack Lite — Swap</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GasBack Lite - Solana Swap with Cashback</title>
   <script src="https://terminal.jup.ag/main-v2.js"></script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --jupiter-primary: #fff;
-      --jupiter-secondary: #f5f5f5;
-      --jupiter-accent: #288DFF;
-      --jupiter-text: #1a1a1a;
-      --jupiter-text-secondary: #707070;
-      --jupiter-border: #e5e5e5;
-      --jupiter-success: #1abc9c;
-      --jupiter-warning: #f39c12;
-      --jupiter-error: #e74c3c;
-      --jupiter-bg: #ffffff;
-      --jupiter-card-bg: #fafafa;
-      --jupiter-shadow: rgba(0, 0, 0, 0.05);
+      --primary: #288DFF;
+      --primary-hover: #1a7de0;
+      --background: #ffffff;
+      --card-bg: #fafafa;
+      --text-primary: #1a1a1a;
+      --text-secondary: #707070;
+      --border: #e5e5e5;
+      --success: #1abc9c;
+      --warning: #f39c12;
+      --error: #e74c3c;
+      --shadow: rgba(0, 0, 0, 0.05);
     }
-    
+
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      background-color: var(--jupiter-bg);
-      color: var(--jupiter-text);
-      line-height: 1.5;
+      background-color: #f5f7fa;
+      color: var(--text-primary);
+      line-height: 1.6;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
     }
-    
+
     .container {
       max-width: 480px;
       width: 100%;
       margin: 40px auto;
     }
-    
+
     .header {
       text-align: center;
       margin-bottom: 30px;
     }
-    
+
     .logo {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 700;
-      color: var(--jupiter-accent);
+      color: var(--primary);
       margin-bottom: 8px;
+      letter-spacing: -0.5px;
     }
-    
+
     .subtitle {
       font-size: 1rem;
-      color: var(--jupiter-text-secondary);
-      margin-bottom: 20px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
     }
-    
+
+    .cashback-banner {
+      background: linear-gradient(90deg, #1abc9c, #2ecc71);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      color: white;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(26, 188, 156, 0.2);
+    }
+
+    .cashback-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .cashback-amount {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .cashback-description {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
     .card {
-      background: var(--jupiter-primary);
+      background: var(--background);
       border-radius: 16px;
-      box-shadow: 0 4px 24px var(--jupiter-shadow);
-      border: 1px solid var(--jupiter-border);
+      box-shadow: 0 4px 24px var(--shadow);
+      border: 1px solid var(--border);
       overflow: hidden;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
-    
+
     .card-header {
       padding: 20px;
-      border-bottom: 1px solid var(--jupiter-border);
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    
+
     .card-title {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-weight: 600;
     }
-    
+
+    .settings-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
     .swap-container {
-      padding: 20px;
+      padding: 24px;
     }
-    
-    .swap-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
+
     .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      margin-bottom: 16px;
     }
-    
+
     .input-label {
       font-size: 0.85rem;
       font-weight: 500;
-      color: var(--jupiter-text-secondary);
+      color: var(--text-secondary);
+      margin-bottom: 8px;
     }
-    
+
     .token-input {
       display: flex;
       align-items: center;
-      background: var(--jupiter-card-bg);
+      background: var(--card-bg);
       border-radius: 12px;
-      padding: 12px 16px;
-      border: 1px solid var(--jupiter-border);
+      padding: 16px;
+      border: 1px solid var(--border);
     }
-    
+
     .token-selector {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: var(--jupiter-primary);
-      border: 1px solid var(--jupiter-border);
+      background: var(--background);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 6px 12px;
+      padding: 8px 12px;
       font-weight: 600;
       cursor: pointer;
+      min-width: 120px;
     }
-    
+
     .token-logo {
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      background: var(--jupiter-accent);
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
     }
-    
+
     .token-amount {
       flex: 1;
       border: none;
       background: transparent;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 600;
       text-align: right;
       outline: none;
+      color: var(--text-primary);
     }
-    
+
     .swap-icon {
       display: flex;
       justify-content: center;
-      padding: 8px 0;
+      padding: 12px 0;
     }
-    
-    .swap-btn {
-      background: var(--jupiter-accent);
+
+    .swap-arrow {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .swap-arrow:hover {
+      transform: rotate(180deg);
+      border-color: var(--primary);
+    }
+
+    .swap-button {
+      width: 100%;
+      background: var(--primary);
       color: white;
       border: none;
       border-radius: 12px;
-      padding: 16px;
-      font-size: 1rem;
+      padding: 18px;
+      font-size: 1.1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
       margin-top: 8px;
     }
-    
-    .swap-btn:hover {
-      background: #1a7de0;
-      transform: translateY(-1px);
+
+    .swap-button:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(40, 141, 255, 0.3);
     }
-    
-    .swap-btn:active {
-      transform: translateY(0);
-    }
-    
+
     .info-card {
-      background: var(--jupiter-card-bg);
+      background: var(--card-bg);
       border-radius: 12px;
       padding: 16px;
-      margin-top: 16px;
+      margin-top: 20px;
     }
-    
+
     .info-row {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
+      padding: 10px 0;
       font-size: 0.9rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
     }
-    
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
     .info-label {
-      color: var(--jupiter-text-secondary);
+      color: var(--text-secondary);
     }
-    
+
     .info-value {
       font-weight: 500;
     }
-    
+
     .cashback-highlight {
-      background: rgba(26, 188, 156, 0.1);
-      border: 1px solid rgba(26, 188, 156, 0.2);
-      border-radius: 12px;
-      padding: 16px;
-      margin: 20px 0;
-      text-align: center;
-    }
-    
-    .cashback-title {
+      color: var(--success);
       font-weight: 600;
-      color: var(--jupiter-success);
-      margin-bottom: 8px;
     }
-    
-    .cashback-amount {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--jupiter-success);
-    }
-    
+
     .footer {
       text-align: center;
       font-size: 0.8rem;
-      color: var(--jupiter-text-secondary);
+      color: var(--text-secondary);
       padding: 20px 0;
     }
-    
-    .powered-by {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    
+
     @media (max-width: 480px) {
       .container {
         margin: 20px auto;
@@ -244,6 +282,10 @@
       .swap-container {
         padding: 16px;
       }
+      
+      .token-amount {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
@@ -253,152 +295,150 @@
       <div class="logo">GasBack Lite</div>
       <div class="subtitle">Swap on Solana with automatic cashback rewards</div>
     </div>
-    
-    <div class="cashback-highlight">
+
+    <div class="cashback-banner">
       <div class="cashback-title">Weekly Cashback Reward</div>
-      <div class="cashback-amount">0.10% of swap fees</div>
-      <div>Earn USDC back for every trade</div>
+      <div class="cashback-amount">0.10%</div>
+      <div class="cashback-description">Earn USDC back on every trade</div>
     </div>
-    
+
     <div class="card">
       <div class="card-header">
         <div class="card-title">Swap Tokens</div>
         <div class="settings-icon">⚙️</div>
       </div>
-      
+
       <div class="swap-container">
-        <div class="swap-form">
-          <div class="input-group">
-            <div class="input-label">You pay</div>
-            <div class="token-input">
-              <div class="token-selector">
-                <div class="token-logo"></div>
-                <span id="input-token">USDC</span>
-              </div>
-              <input type="text" class="token-amount" id="input-amount" value="100" placeholder="0.00">
+        <div class="input-group">
+          <div class="input-label">You pay</div>
+          <div class="token-input">
+            <div class="token-selector">
+              <div class="token-logo">U</div>
+              <span>USDC</span>
             </div>
+            <input type="text" class="token-amount" id="input-amount" value="100" placeholder="0.00">
           </div>
-          
-          <div class="swap-icon">
-            <div class="swap-arrow">↓</div>
+        </div>
+
+        <div class="swap-icon">
+          <div class="swap-arrow">↓</div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-label">You receive</div>
+          <div class="token-input">
+            <div class="token-selector">
+              <div class="token-logo">S</div>
+              <span>SOL</span>
+            </div>
+            <input type="text" class="token-amount" id="output-amount" value="0.1" placeholder="0.00" readonly>
           </div>
-          
-          <div class="input-group">
-            <div class="input-label">You receive</div>
-            <div class="token-input">
-              <div class="token-selector">
-                <div class="token-logo"></div>
-                <span id="output-token">SOL</span>
-              </div>
-              <input type="text" class="token-amount" id="output-amount" value="0.1" placeholder="0.00" readonly>
-            </div>
+        </div>
+
+        <button class="swap-button" id="open">
+          Connect Wallet & Swap
+        </button>
+
+        <div class="info-card">
+          <div class="info-row">
+            <span class="info-label">Rate</span>
+            <span class="info-value">1 USDC ≈ 0.001 SOL</span>
           </div>
-          
-          <button class="swap-btn" id="open">
-            Connect Wallet & Swap
-          </button>
-          
-          <div class="info-card">
-            <div class="info-row">
-              <span class="info-label">Rate</span>
-              <span class="info-value" id="rate">1 USDC ≈ 0.001 SOL</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Slippage</span>
-              <span class="info-value" id="slippage">0.5%</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Platform Fee</span>
-              <span class="info-value" id="fee">0.10%</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Estimated Cashback</span>
-              <span class="info-value" id="cashback" style="color: var(--jupiter-success);">0.10 USDC</span>
-            </div>
+          <div class="info-row">
+            <span class="info-label">Slippage</span>
+            <span class="info-value">0.5%</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Platform Fee</span>
+            <span class="info-value">0.10%</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Estimated Cashback</span>
+            <span class="info-value cashback-highlight">0.10 USDC</span>
           </div>
         </div>
       </div>
     </div>
-    
+
     <div class="footer">
       <div>Powered by Jupiter Terminal</div>
-      <div class="powered-by">
-        <span>Referral: www.whtg1.com</span>
-      </div>
+      <div>Referral: www.whtg1.com</div>
     </div>
   </div>
 
-<script>
-(async function(){
-  const qs = new URLSearchParams(location.search);
-  const inMint  = qs.get("in")  || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC
-  const outMint = qs.get("out") || "So11111111111111111111111111111111111111112"; // SOL
-  const amt     = qs.get("amt") || "100";
-  const slip    = parseInt(qs.get("slip") || "50",10);
-  const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
-  const ref     = "www.whtg1.com"; // Paramètre de référence pour pointer vers www.whtg1.com
+  <script>
+    (async function(){
+      const qs = new URLSearchParams(location.search);
+      const inMint  = qs.get("in")  || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC
+      const outMint = qs.get("out") || "So11111111111111111111111111111111111111112"; // SOL
+      const amt     = qs.get("amt") || "100";
+      const slip    = parseInt(qs.get("slip") || "50",10);
+      const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
+      const ref     = "www.whtg1.com"; // Paramètre de référence pour pointer vers www.whtg1.com
 
-  // Mise à jour des éléments d'interface
-  document.getElementById("input-amount").value = amt;
-  document.getElementById("slippage").textContent = (slip / 100).toFixed(1) + "%";
-  document.getElementById("fee").textContent = (feeBps / 100).toFixed(2) + "%";
-  document.getElementById("cashback").textContent = (amt * feeBps / 10000).toFixed(2) + " USDC";
+      // Mise à jour des éléments d'interface
+      document.getElementById("input-amount").value = amt;
+      document.querySelector(".info-row:nth-child(2) .info-value").textContent = (slip / 100).toFixed(1) + "%";
+      document.querySelector(".info-row:nth-child(3) .info-value").textContent = (feeBps / 100).toFixed(2) + "%";
+      document.querySelector(".info-row:nth-child(4) .info-value").textContent = (amt * feeBps / 10000).toFixed(2) + " USDC";
 
-  const RPCS = [
-    "https://solana-rpc.publicnode.com",
-    "https://rpc.ankr.com/solana",
-    "https://api.mainnet-beta.solana.com"
-  ];
-  async function pickRpc(){
-    for(const url of RPCS){
-      try{
-        const r = await fetch(url, {
-          method:"POST",
-          headers:{ "content-type":"application/json" },
-          body: JSON.stringify({jsonrpc:"2.0",id:1,method:"getHealth"})
-        });
-        if(r.ok){
-          const j = await r.json().catch(()=>null);
-          if(j && (j.result==="ok" || j.error==null)) return url;
+      const RPCS = [
+        "https://solana-rpc.publicnode.com",
+        "https://rpc.ankr.com/solana",
+        "https://api.mainnet-beta.solana.com"
+      ];
+      
+      async function pickRpc(){
+        for(const url of RPCS){
+          try{
+            const r = await fetch(url, {
+              method:"POST",
+              headers:{ "content-type":"application/json" },
+              body: JSON.stringify({jsonrpc:"2.0",id:1,method:"getHealth"})
+            });
+            if(r.ok){
+              const j = await r.json().catch(()=>null);
+              if(j && (j.result==="ok" || j.error==null)) return url;
+            }
+          }catch(e){}
         }
-      }catch(e){}
-    }
-    return RPCS[0];
-  }
-  const endpoint = await pickRpc();
+        return RPCS[0];
+      }
+      
+      const endpoint = await pickRpc();
 
-  const FEE_ACCOUNTS = {
-    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
-  };
+      const FEE_ACCOUNTS = {
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
+      };
 
-  if (!window.Jupiter) {
-    alert("Jupiter script blocked. Disable extensions/adblock for this page.");
-    return;
-  }
+      if (!window.Jupiter) {
+        alert("Jupiter script blocked. Disable extensions/adblock for this page.");
+        return;
+      }
 
-  // Configuration de Jupiter avec le paramètre ref si présent
-  const jupiterConfig = {
-    displayMode: "modal",
-    integrated: false,
-    endpoint,
-    defaultInputMint: inMint,
-    defaultOutputMint: outMint,
-    defaultInputAmount: amt.toString(),
-    slippageBps: slip,
-    platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
-  };
+      // Configuration de Jupiter avec le paramètre ref si présent
+      const jupiterConfig = {
+        displayMode: "modal",
+        integrated: false,
+        endpoint,
+        defaultInputMint: inMint,
+        defaultOutputMint: outMint,
+        defaultInputAmount: amt.toString(),
+        slippageBps: slip,
+        platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
+      };
 
-  // Ajout du paramètre ref si présent
-  if (ref) {
-    jupiterConfig.referral = { ref: ref };
-  }
+      // Ajout du paramètre ref si présent
+      if (ref) {
+        jupiterConfig.referral = { ref: ref };
+      }
 
-  window.Jupiter.init(jupiterConfig);
+      window.Jupiter.init(jupiterConfig);
 
-  document.getElementById("open").onclick = () => window.Jupiter.toggle();
+      document.getElementById("open").onclick = () => window.Jupiter.toggle();
 
-  function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
-})();
-</script>
+      function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
+    })();
+  </script>
 </body>
 </html>
