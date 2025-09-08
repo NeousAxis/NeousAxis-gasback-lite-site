@@ -6,36 +6,28 @@
     <title>Jupiter Gasback</title>
     <script src="https://terminal.jup.ag/main-v3.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Arial', sans-serif;
-            background: #0a1426;
-            min-height: 100vh;
-            color: #ffffff;
+            font-family: Arial, sans-serif;
+            background-color: #0a1426;
+            color: white;
+            margin: 0;
             padding: 20px;
         }
-
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-
+        
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
-
+        
         .header h1 {
-            font-size: 2.5rem;
             color: #FFD700;
-            margin-bottom: 20px;
         }
-
+        
         /* Navigation */
         .nav-tabs {
             display: flex;
@@ -43,7 +35,7 @@
             gap: 20px;
             margin-bottom: 30px;
         }
-
+        
         .nav-tab {
             padding: 12px 25px;
             background: rgba(0, 0, 0, 0.6);
@@ -54,22 +46,22 @@
             transition: all 0.3s ease;
             font-weight: bold;
         }
-
+        
         .nav-tab:hover,
         .nav-tab.active {
             background: linear-gradient(45deg, #FFD700, #FFA500);
             color: #000;
         }
-
+        
         /* Tab Content */
         .tab-content {
             display: none;
         }
-
+        
         .tab-content.active {
             display: block;
         }
-
+        
         /* Exchange Container */
         .exchange-container {
             background: rgba(0, 0, 0, 0.7);
@@ -77,14 +69,14 @@
             padding: 30px;
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
-
+        
         /* Jupiter Widget */
         #jupiter-terminal {
             min-height: 600px;
             border-radius: 10px;
             overflow: hidden;
         }
-
+        
         /* Whale Tracker */
         .whale-container {
             background: rgba(0, 0, 0, 0.7);
@@ -92,7 +84,7 @@
             padding: 30px;
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
-
+        
         .whale-title {
             color: #FFD700;
             font-size: 1.8rem;
@@ -100,7 +92,7 @@
             margin-bottom: 20px;
             text-align: center;
         }
-
+        
         .whale-alert {
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.3);
@@ -108,46 +100,32 @@
             padding: 15px;
             margin-bottom: 15px;
         }
-
+        
         .whale-header {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
         }
-
+        
         .whale-amount {
             color: #FFD700;
             font-weight: bold;
             font-size: 1.1rem;
         }
-
+        
         .whale-details {
             margin-left: 30px;
             color: #ccc;
             font-size: 0.9rem;
         }
-
-        @media (max-width: 768px) {
-            .nav-tabs {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            .nav-tab {
-                width: 80%;
-                text-align: center;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <h1>JUPITER GASBACK</h1>
         </div>
-
+        
         <!-- Navigation -->
         <div class="nav-tabs">
             <div class="nav-tab active" onclick="switchTab('exchange')">
@@ -157,14 +135,14 @@
                 Whale Tracker Bot
             </div>
         </div>
-
+        
         <!-- Exchange Tab -->
         <div id="exchange-tab" class="tab-content active">
             <div class="exchange-container">
                 <div id="jupiter-terminal"></div>
             </div>
         </div>
-
+        
         <!-- Whale Tracker Tab -->
         <div id="whale-tab" class="tab-content">
             <div class="whale-container">
@@ -180,7 +158,7 @@
                         <div>Value: ~$54,125,000 USD</div>
                     </div>
                 </div>
-
+                
                 <div class="whale-alert">
                     <div class="whale-header">
                         <div class="whale-amount">15,000 ETH Transfer</div>
@@ -191,7 +169,7 @@
                         <div>Value: ~$38,700,000 USD</div>
                     </div>
                 </div>
-
+                
                 <div class="whale-alert">
                     <div class="whale-header">
                         <div class="whale-amount">500,000 USDC Mint</div>
@@ -216,51 +194,35 @@
             // Add active to selected
             if (event && event.target) {
                 event.target.classList.add('active');
-            } else {
-                // Default to exchange tab
-                document.querySelector('[onclick="switchTab(\'exchange\')"]').classList.add('active');
             }
             document.getElementById(tabName + '-tab').classList.add('active');
         }
-
-        // Initialize Jupiter widget
+        
+        // Initialize Jupiter widget when page loads
         window.addEventListener('load', function() {
-            initJupiter();
-        });
-
-        function initJupiter() {
-            const endpoint = 'https://api.mainnet-beta.solana.com';
-            const inMint = 'So11111111111111111111111111111111111111112'; // SOL
-            const outMint = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'; // USDC
-            const amt = 1;
-            const slip = 100; // 1%
-            const feeBps = 10; // 0.10%
-            const FEE_ACCOUNTS = {
-                "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
-            };
-            const ref = "www.whtg1.com";
-
-            // Initialize Jupiter directly in the container
+            // Initialize Jupiter
             if (window.Jupiter) {
                 window.Jupiter.init({
                     displayMode: "integrated",
                     integrated: true,
-                    endpoint: endpoint,
-                    defaultInputMint: inMint,
-                    defaultOutputMint: outMint,
-                    defaultInputAmount: amt.toString(),
-                    slippageBps: slip,
+                    endpoint: 'https://api.mainnet-beta.solana.com',
+                    defaultInputMint: 'So11111111111111111111111111111111111111112', // SOL
+                    defaultOutputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+                    defaultInputAmount: '1',
+                    slippageBps: 100, // 1%
                     platformFeeAndAccounts: {
-                        feeBps: feeBps,
-                        feeAccounts: FEE_ACCOUNTS
+                        feeBps: 10, // 0.10%
+                        feeAccounts: {
+                            "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
+                        }
                     },
                     referral: {
-                        ref: ref
+                        ref: "www.whtg1.com"
                     },
                     containerElement: document.getElementById('jupiter-terminal')
                 });
             }
-        }
+        });
     </script>
 </body>
 </html>
