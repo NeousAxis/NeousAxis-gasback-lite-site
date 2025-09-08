@@ -34,6 +34,7 @@
   const amt     = qs.get("amt") || "0.10";
   const slip    = parseInt(qs.get("slip") || "50",10);
   const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
+  const ref     = qs.get("ref"); // Paramètre de référence
 
   document.getElementById("pair").textContent = short(inMint)+" → "+short(outMint);
   document.getElementById("cfg").textContent  = `slip: ${slip} bps, fee: ${feeBps} bps`;
@@ -70,7 +71,8 @@
     return;
   }
 
-  window.Jupiter.init({
+  // Configuration de Jupiter avec le paramètre ref si présent
+  const jupiterConfig = {
     displayMode: "modal",
     integrated: false,
     endpoint,
@@ -79,7 +81,14 @@
     defaultInputAmount: amt.toString(),
     slippageBps: slip,
     platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
-  });
+  };
+
+  // Ajout du paramètre ref si présent
+  if (ref) {
+    jupiterConfig.referral = { ref: ref };
+  }
+
+  window.Jupiter.init(jupiterConfig);
 
   document.getElementById("open").onclick = () => window.Jupiter.toggle();
 
