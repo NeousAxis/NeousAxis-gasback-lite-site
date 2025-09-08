@@ -393,8 +393,7 @@
 
         // Auto-load Jupiter widget on page load
         window.addEventListener('load', function() {
-            // Wait for Jupiter script to load
-            setTimeout(initJupiter, 1000);
+            initJupiter();
         });
 
         function initJupiter() {
@@ -410,23 +409,34 @@
             const ref = "www.whtg1.com";
 
             // Initialize Jupiter directly in the container
-            window.Jupiter.init({
-                displayMode: "integrated",
-                integrated: true,
-                endpoint: endpoint,
-                defaultInputMint: inMint,
-                defaultOutputMint: outMint,
-                defaultInputAmount: amt.toString(),
-                slippageBps: slip,
-                platformFeeAndAccounts: {
-                    feeBps: feeBps,
-                    feeAccounts: FEE_ACCOUNTS
-                },
-                referral: {
-                    ref: ref
-                },
-                containerElement: document.getElementById('jupiter-terminal')
-            });
+            if (window.Jupiter) {
+                window.Jupiter.init({
+                    displayMode: "integrated",
+                    integrated: true,
+                    endpoint: endpoint,
+                    defaultInputMint: inMint,
+                    defaultOutputMint: outMint,
+                    defaultInputAmount: amt.toString(),
+                    slippageBps: slip,
+                    platformFeeAndAccounts: {
+                        feeBps: feeBps,
+                        feeAccounts: FEE_ACCOUNTS
+                    },
+                    referral: {
+                        ref: ref
+                    },
+                    containerElement: document.getElementById('jupiter-terminal')
+                });
+            } else {
+                // Fallback if Jupiter is not loaded
+                document.getElementById('jupiter-terminal').innerHTML = 
+                    '<div class="jupiter-placeholder">' +
+                    '<h3>Jupiter Terminal Failed to Load</h3>' +
+                    '<p>Please refresh the page or disable ad blockers</p>' +
+                    '<div style="margin-top: 30px; font-size: 3rem;">⚡</div>' +
+                    '<p style="margin-top: 15px;">Fast • Secure • Low Fees</p>' +
+                    '</div>';
+            }
         }
     </script>
 </body>
