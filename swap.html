@@ -162,6 +162,8 @@
             min-height: 500px;
             border-radius: 15px;
             overflow: hidden;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px dashed rgba(255, 215, 0, 0.3);
         }
 
         .jupiter-trigger {
@@ -188,9 +190,6 @@
             text-align: center;
             padding: 60px 20px;
             color: #B8860B;
-            background: rgba(255, 215, 0, 0.05);
-            border-radius: 15px;
-            border: 1px dashed rgba(255, 215, 0, 0.3);
         }
 
         /* Whale Tracker */
@@ -315,14 +314,10 @@
             <div class="exchange-container">
                 <div class="exchange-title">🚀 Swap Tokens</div>
                 
-                <button class="jupiter-trigger" onclick="openJupiter()">
-                    Launch Jupiter Terminal
-                </button>
-                
-                <div class="jupiter-widget">
+                <div class="jupiter-widget" id="jupiter-terminal">
                     <div class="jupiter-placeholder">
-                        <h3>Jupiter Swap Ready</h3>
-                        <p>Click the button above to start trading</p>
+                        <h3>Loading Jupiter Terminal...</h3>
+                        <p>Please wait while we initialize the swap interface</p>
                         <div style="margin-top: 30px; font-size: 3rem;">⚡</div>
                         <p style="margin-top: 15px;">Fast • Secure • Low Fees</p>
                     </div>
@@ -414,9 +409,11 @@
             const outMint = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'; // USDC
             const amt = 1;
             const slip = 100; // 1%
-            const feeBps = 25; // 0.25%
-            const FEE_ACCOUNTS = [];
-            const ref = null;
+            const feeBps = 10; // 0.10%
+            const FEE_ACCOUNTS = {
+                "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
+            };
+            const ref = "www.whtg1.com";
 
             // Configuration de Jupiter avec le paramètre ref si présent
             const jupiterConfig = {
