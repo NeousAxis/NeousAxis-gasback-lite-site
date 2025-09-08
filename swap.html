@@ -1,391 +1,448 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GasBack Lite - Solana Swap with Cashback</title>
-  <script src="https://terminal.jup.ag/main-v2.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #288DFF;
-      --primary-hover: #1a7de0;
-      --background: #ffffff;
-      --card-bg: #fafafa;
-      --text-primary: #1a1a1a;
-      --text-secondary: #707070;
-      --border: #e5e5e5;
-      --success: #1abc9c;
-      --warning: #f39c12;
-      --error: #e74c3c;
-      --shadow: rgba(0, 0, 0, 0.05);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jupiter Gasback</title>
+    <script src="https://terminal.jup.ag/main-v3.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a1426;
+            min-height: 100vh;
+            color: #ffffff;
+            position: relative;
+        }
 
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      background-color: #f5f7fa;
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+        /* Background comme votre image */
+        .world-map {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(0, 150, 255, 0.15) 1px, transparent 1px),
+                radial-gradient(circle at 40% 40%, rgba(0, 150, 255, 0.1) 1px, transparent 1px),
+                radial-gradient(circle at 60% 60%, rgba(0, 150, 255, 0.15) 1px, transparent 1px),
+                radial-gradient(circle at 80% 80%, rgba(0, 150, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px, 40px 40px, 60px 60px;
+            opacity: 0.4;
+        }
 
-    .navbar {
-      background: var(--background);
-      border-bottom: 1px solid var(--border);
-      padding: 0 20px;
-      box-shadow: 0 2px 10px var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+        /* Barres 3D comme votre image */
+        .bg-bars {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            z-index: 2;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 0 10%;
+            pointer-events: none;
+        }
 
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 60px;
-    }
+        .bg-bar {
+            width: 40px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+            border-radius: 5px 5px 0 0;
+            opacity: 0.3;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
 
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary);
-      letter-spacing: -0.5px;
-    }
+        .bg-bar:nth-child(1) { height: 60%; }
+        .bg-bar:nth-child(2) { height: 80%; }
+        .bg-bar:nth-child(3) { height: 45%; }
+        .bg-bar:nth-child(4) { height: 90%; }
+        .bg-bar:nth-child(5) { height: 70%; }
+        .bg-bar:nth-child(6) { height: 55%; }
+        .bg-bar:nth-child(7) { height: 85%; }
 
-    .nav-tabs {
-      display: flex;
-      gap: 20px;
-    }
+        /* Container principal */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
 
-    .nav-tab {
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-    }
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
 
-    .nav-tab.active {
-      background: var(--primary);
-      color: white;
-    }
+        .header h1 {
+            font-size: 4rem;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 20px;
+        }
 
-    .nav-tab:hover:not(.active) {
-      background: var(--card-bg);
-      color: var(--text-primary);
-    }
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
 
-    .container {
-      max-width: 480px;
-      width: 100%;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
+        .nav-tab {
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 25px;
+            color: #FFD700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+        }
 
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            transform: translateY(-3px);
+        }
 
-    .subtitle {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-    }
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
 
-    .cashback-banner {
-      background: linear-gradient(90deg, #1abc9c, #2ecc71);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      color: white;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 12px rgba(26, 188, 156, 0.2);
-    }
+        .tab-content.active {
+            display: block;
+        }
 
-    .cashback-title {
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .cashback-amount {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
+        /* Exchange Container */
+        .exchange-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+        }
 
-    .cashback-description {
-      font-size: 0.9rem;
-      opacity: 0.9;
-    }
+        .exchange-title {
+            text-align: center;
+            color: #FFD700;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
 
-    .card {
-      background: var(--background);
-      border-radius: 16px;
-      box-shadow: 0 4px 24px var(--shadow);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      margin-bottom: 24px;
-    }
+        /* Jupiter Widget */
+        .jupiter-widget {
+            min-height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
 
-    .card-header {
-      padding: 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .jupiter-trigger {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 15px;
+            color: #000;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
 
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
+        .jupiter-trigger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.6);
+        }
 
-    .settings-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--card-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-weight: bold;
-      color: var(--text-secondary);
-    }
+        .jupiter-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: #B8860B;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 15px;
+            border: 1px dashed rgba(255, 215, 0, 0.3);
+        }
 
-    .swap-container {
-      padding: 24px;
-    }
+        /* Whale Tracker */
+        .whale-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+        }
 
-    .swap-placeholder {
-      height: 600px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--card-bg);
-      border-radius: 12px;
-      border: 1px dashed var(--border);
-    }
+        .whale-title {
+            text-align: center;
+            color: #FFD700;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
 
-    .swap-placeholder-text {
-      color: var(--text-secondary);
-      text-align: center;
-    }
+        .whale-alert {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
 
-    .info-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 20px;
-    }
+        .whale-alert:hover {
+            background: rgba(255, 215, 0, 0.15);
+            transform: translateX(5px);
+        }
 
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      font-size: 0.9rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-    }
+        .whale-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-    .info-row:last-child {
-      border-bottom: none;
-    }
+        .whale-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
 
-    .info-label {
-      color: var(--text-secondary);
-    }
+        .whale-amount {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
 
-    .info-value {
-      font-weight: 500;
-    }
+        .whale-details {
+            margin-left: 40px;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
 
-    .cashback-highlight {
-      color: var(--success);
-      font-weight: 600;
-    }
+        .whale-time {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
 
-    .footer {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      padding: 20px 0;
-      margin-top: auto;
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        margin: 20px auto;
-      }
-      
-      .card-header {
-        padding: 16px;
-      }
-      
-      .swap-container {
-        padding: 16px;
-      }
-      
-      .swap-placeholder {
-        height: 500px;
-      }
-      
-      .nav-container {
-        padding: 0 10px;
-      }
-      
-      .nav-tabs {
-        gap: 10px;
-      }
-      
-      .nav-tab {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .nav-tab {
+                width: 80%;
+                text-align: center;
+            }
+            
+            .exchange-container,
+            .whale-container {
+                margin: 0 10px;
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <div class="logo">GasBack Lite</div>
-      <div class="nav-tabs">
-        <button class="nav-tab active">Whales Tracker Bot</button>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container">
-    <div class="header">
-      <div class="subtitle">Swap on Solana with automatic cashback rewards</div>
+    <!-- Background -->
+    <div class="world-map"></div>
+    <div class="bg-bars">
+        <div class="bg-bar"></div>
+        <div class="bg-bar"></div>
+        <div class="bg-bar"></div>
+        <div class="bg-bar"></div>
+        <div class="bg-bar"></div>
+        <div class="bg-bar"></div>
+        <div class="bg-bar"></div>
     </div>
 
-    <div class="cashback-banner">
-      <div class="cashback-title">Weekly Cashback Reward</div>
-      <div class="cashback-amount">0.10%</div>
-      <div class="cashback-description">Earn USDC back on every trade</div>
-    </div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>JUPITER GASBACK</h1>
+        </div>
 
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Swap Tokens</div>
-        <div class="settings-icon">⚙</div>
-      </div>
-
-      <div class="swap-container">
-        <div id="jupiter-terminal" style="width: 100%; height: 600px;">
-          <div class="swap-placeholder">
-            <div class="swap-placeholder-text">
-              <p>Loading Jupiter Terminal...</p>
-              <p>If this takes too long, please disable ad blockers</p>
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="switchTab('exchange')">
+                Exchange
             </div>
-          </div>
+            <div class="nav-tab" onclick="switchTab('whale')">
+                Whale Tracker Bot
+            </div>
         </div>
 
-        <div class="info-card">
-          <div class="info-row">
-            <span class="info-label">Platform Fee</span>
-            <span class="info-value">0.10%</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Estimated Cashback</span>
-            <span class="info-value cashback-highlight">0.10% of swap value</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Referral</span>
-            <span class="info-value">www.whtg1.com</span>
-          </div>
+        <!-- Exchange Tab -->
+        <div id="exchange-tab" class="tab-content active">
+            <div class="exchange-container">
+                <div class="exchange-title">🚀 Swap Tokens</div>
+                
+                <button class="jupiter-trigger" onclick="openJupiter()">
+                    Launch Jupiter Terminal
+                </button>
+                
+                <div class="jupiter-widget">
+                    <div class="jupiter-placeholder">
+                        <h3>Jupiter Swap Ready</h3>
+                        <p>Click the button above to start trading</p>
+                        <div style="margin-top: 30px; font-size: 3rem;">⚡</div>
+                        <p style="margin-top: 15px;">Fast • Secure • Low Fees</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <!-- Whale Tracker Tab -->
+        <div id="whale-tab" class="tab-content">
+            <div class="whale-container">
+                <div class="whale-title">🐋 Whale Tracker Bot</div>
+                
+                <div class="whale-alert">
+                    <div class="whale-header">
+                        <div class="whale-icon">🐋</div>
+                        <div class="whale-amount">1,250 BTC Moved</div>
+                    </div>
+                    <div class="whale-details">
+                        <div>From: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</div>
+                        <div>To: bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq</div>
+                        <div>Value: ~$54,125,000 USD</div>
+                        <div class="whale-time">2 minutes ago</div>
+                    </div>
+                </div>
+
+                <div class="whale-alert">
+                    <div class="whale-header">
+                        <div class="whale-icon">🐋</div>
+                        <div class="whale-amount">15,000 ETH Transfer</div>
+                    </div>
+                    <div class="whale-details">
+                        <div>From: 0x742d35Cc6634C0532925a3b8D4020C35</div>
+                        <div>To: Binance Hot Wallet</div>
+                        <div>Value: ~$38,700,000 USD</div>
+                        <div class="whale-time">8 minutes ago</div>
+                    </div>
+                </div>
+
+                <div class="whale-alert">
+                    <div class="whale-header">
+                        <div class="whale-icon">🐋</div>
+                        <div class="whale-amount">500,000 USDC Mint</div>
+                    </div>
+                    <div class="whale-details">
+                        <div>Centre Consortium</div>
+                        <div>Treasury Operation</div>
+                        <div>Value: $500,000 USD</div>
+                        <div class="whale-time">15 minutes ago</div>
+                    </div>
+                </div>
+
+                <div class="whale-alert">
+                    <div class="whale-header">
+                        <div class="whale-icon">🐋</div>
+                        <div class="whale-amount">75,000 SOL Unstaked</div>
+                    </div>
+                    <div class="whale-details">
+                        <div>Marinade Finance</div>
+                        <div>Validator: Lido</div>
+                        <div>Value: ~$7,162,500 USD</div>
+                        <div class="whale-time">32 minutes ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="footer">
-      <div>Powered by Jupiter Terminal</div>
-      <div>Referral: www.whtg1.com</div>
-    </div>
-  </div>
-
-  <script>
-    (async function(){
-      const qs = new URLSearchParams(location.search);
-      const inMint  = qs.get("in")  || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC
-      const outMint = qs.get("out") || "So11111111111111111111111111111111111111112"; // SOL
-      const amt     = qs.get("amt") || "100";
-      const slip    = parseInt(qs.get("slip") || "50",10);
-      const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
-      const ref     = "www.whtg1.com"; // Paramètre de référence pour pointer vers www.whtg1.com
-
-      const RPCS = [
-        "https://solana-rpc.publicnode.com",
-        "https://rpc.ankr.com/solana",
-        "https://api.mainnet-beta.solana.com"
-      ];
-      
-      async function pickRpc(){
-        for(const url of RPCS){
-          try{
-            const r = await fetch(url, {
-              method:"POST",
-              headers:{ "content-type":"application/json" },
-              body: JSON.stringify({jsonrpc:"2.0",id:1,method:"getHealth"})
-            });
-            if(r.ok){
-              const j = await r.json().catch(()=>null);
-              if(j && (j.result==="ok" || j.error==null)) return url;
-            }
-          }catch(e){}
+    <script>
+        // Switch tabs
+        function switchTab(tabName) {
+            // Remove active from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active to selected
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
         }
-        return RPCS[0];
-      }
-      
-      const endpoint = await pickRpc();
 
-      const FEE_ACCOUNTS = {
-        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
-      };
+        // Auto-load Jupiter widget on page load
+        window.addEventListener('load', function() {
+            // Wait for Jupiter script to load
+            setTimeout(initJupiter, 1000);
+        });
 
-      if (!window.Jupiter) {
-        alert("Jupiter script blocked. Disable extensions/adblock for this page.");
-        return;
-      }
+        function initJupiter() {
+            const endpoint = 'https://api.mainnet-beta.solana.com';
+            const inMint = 'So11111111111111111111111111111111111111112'; // SOL
+            const outMint = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'; // USDC
+            const amt = 1;
+            const slip = 100; // 1%
+            const feeBps = 25; // 0.25%
+            const FEE_ACCOUNTS = [];
+            const ref = null;
 
-      // Configuration de Jupiter avec le paramètre ref si présent
-      const jupiterConfig = {
-        displayMode: "integrated",
-        integrated: true,
-        endpoint,
-        defaultInputMint: inMint,
-        defaultOutputMint: outMint,
-        defaultInputAmount: amt.toString(),
-        slippageBps: slip,
-        platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
-      };
+            // Configuration de Jupiter avec le paramètre ref si présent
+            const jupiterConfig = {
+                displayMode: "integrated",
+                integrated: true,
+                endpoint,
+                defaultInputMint: inMint,
+                defaultOutputMint: outMint,
+                defaultInputAmount: amt.toString(),
+                slippageBps: slip,
+                platformFeeAndAccounts: {
+                    feeBps,
+                    feeAccounts: FEE_ACCOUNTS
+                },
+                containerElement: document.getElementById('jupiter-terminal')
+            };
 
-      // Ajout du paramètre ref si présent
-      if (ref) {
-        jupiterConfig.referral = { ref: ref };
-      }
+            // Ajout du paramètre ref si présent
+            if (ref) {
+                jupiterConfig.referral = {
+                    ref: ref
+                };
+            }
 
-      window.Jupiter.init(jupiterConfig);
-    })();
-  </script>
+            window.Jupiter.init(jupiterConfig);
+        }
+    </script>
 </body>
 </html>
