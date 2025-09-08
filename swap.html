@@ -4,56 +4,84 @@
   <meta charset="utf-8" />
   <title>GasBack Lite — Swap</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Jupiter Terminal -->
   <script src="https://terminal.jup.ag/main-v2.js"></script>
   <style>
     body{font-family:system-ui;margin:0;background:#0b0f19;color:#fff}
-    .wrap{max-width:900px;margin:24px auto;padding:16px}
-    .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .wrap{max-width:960px;margin:24px auto;padding:16px}
+    .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
     .pill{background:#141a2a;border:1px solid #223055;border-radius:999px;padding:6px 10px;font-size:12px}
-    #t{height:560px}
+    .btn{background:#1b2a4d;border:1px solid #223055;border-radius:10px;padding:10px 14px;cursor:pointer}
+    a{color:#9fc3ff;text-decoration:none}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="bar">
+    <div class="row">
       <div><strong>GasBack Lite</strong> — <span id="pair">…</span></div>
       <div class="pill" id="cfg">slip: –, fee: – bps</div>
     </div>
-    <div id="t"></div>
+    <div class="row">
+      <button class="btn" id="open">Open Swap</button>
+      <div style="opacity:.75;font-size:12px">Params: <code>?in=…&out=…&amt=0.5&slip=75&feeBps=10</code></div>
+    </div>
   </div>
 
 <script>
-(function(){
+(async function(){
   const qs = new URLSearchParams(location.search);
-  const inMint  = qs.get("in")  || "So11111111111111111111111111111111111111112"; // SOL
-  const outMint = qs.get("out") || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC
-  const amt     = qs.get("amt") || "0.10"; // quantité "humaine" du token IN
-  const slip    = parseInt(qs.get("slip") || "50", 10);  // 50 bps = 0.5%
-  const feeBps  = parseInt(qs.get("feeBps") || "10", 10); // 10 bps = 0.1%
+  const inMint  = qs.get("in")  || "So11111111111111111111111111111111111111112";
+  const outMint = qs.get("out") || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+  const amt     = qs.get("amt") || "0.10";
+  const slip    = parseInt(qs.get("slip") || "50",10);
+  const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
 
   document.getElementById("pair").textContent = short(inMint)+" → "+short(outMint);
   document.getElementById("cfg").textContent  = `slip: ${slip} bps, fee: ${feeBps} bps`;
 
-  // ⚠️ Pour ENCaisser réellement les fees, il faut déclarer vos feeAccounts (ATA par mint).
-  // Pour démarrer sans encaissement (tests), laissez feeAccounts: {}.
+  const RPCS = [
+    "https://solana-rpc.publicnode.com",
+    "https://rpc.ankr.com/solana",
+    "https://api.mainnet-beta.solana.com"
+  ];
+  async function pickRpc(){
+    for(const url of RPCS){
+      try{
+        const r = await fetch(url, {
+          method:"POST",
+          headers:{ "content-type":"application/json" },
+          body: JSON.stringify({jsonrpc:"2.0",id:1,method:"getHealth"})
+        });
+        if(r.ok){
+          const j = await r.json().catch(()=>null);
+          if(j && (j.result==="ok" || j.error==null)) return url;
+        }
+      }catch(e){}
+    }
+    return RPCS[0];
+  }
+  const endpoint = await pickRpc();
+
+  const FEE_ACCOUNTS = {
+    // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "PASTE_YOUR_USDC_ATA"
+  };
+
+  if (!window.Jupiter) {
+    alert("Jupiter script blocked. Disable extensions/adblock for this page.");
+    return;
+  }
+
   window.Jupiter.init({
-    container: document.getElementById("t"),
-    displayMode: "integrated",
-    integrated: true,
-    endpoint: "https://api.mainnet-beta.solana.com",
+    displayMode: "modal",
+    integrated: false,
+    endpoint,
     defaultInputMint: inMint,
     defaultOutputMint: outMint,
     defaultInputAmount: amt.toString(),
     slippageBps: slip,
-    platformFeeAndAccounts: {
-      feeBps: feeBps,
-      feeAccounts: {
-        // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "<VOTRE_ATA_USDC>", // à renseigner quand prêt
-        // Ajoutez d'autres mints si besoin
-      }
-    }
+    platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
   });
+
+  document.getElementById("open").onclick = () => window.Jupiter.toggle();
 
   function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
 })();
