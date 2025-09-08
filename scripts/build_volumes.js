@@ -1,9 +1,8 @@
 import fs from "fs";
 import { Connection, PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
-import utc from "dayjs-plugin-utc";
-import tz from "dayjs-plugin-timezone";
-dayjs.extend(utc); dayjs.extend(tz);
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 const RPC_URL = process.env.RPC_URL || "https://api.mainnet-beta.solana.com";
 const FEE_BPS = parseInt(process.env.FEE_BPS || "10", 10);
@@ -16,9 +15,9 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 const conn = new Connection(RPC_URL, "confirmed");
 const feeAta = new PublicKey(FEE_USDC_ATA);
 
-// Fenêtre hebdo: du lundi précédent 12:00 Europe/Zurich au lundi courant 12:00
+// Fenêtre hebdo: du lundi précédent 12:00 UTC au lundi courant 12:00
 function weekWindowNow() {
-  const now = dayjs().tz("Europe/Zurich");
+  const now = dayjs();
   const monday = now.startOf("week").add(1, "day"); // Monday 00:00
   const start = monday.add(12, "hour").subtract(7, "day"); // last Mon 12:00
   const end = monday.add(12, "hour"); // this Mon 12:00
