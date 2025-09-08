@@ -2,39 +2,35 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>GasBack Lite — Swap (debug)</title>
+  <title>GasBack Lite — Swap (fix)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://terminal.jup.ag/main-v2.js"></script>
   <style>
     body{font-family:system-ui;margin:0;background:#0b0f19;color:#fff}
     .wrap{max-width:960px;margin:24px auto;padding:16px}
+    .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
     .pill{background:#141a2a;border:1px solid #223055;border-radius:999px;padding:6px 10px;font-size:12px}
-    #term{min-height:600px}
-    #dbg{white-space:pre-wrap;font:12px/1.4 ui-monospace,Menlo,monospace;background:#111;color:#9fc3ff;padding:8px;border-radius:8px;border:1px solid #223055}
-    a{color:#9fc3ff}
+    #term{height:640px;border:1px solid #223055;border-radius:12px}
+    .btn{background:#1b2a4d;border:1px solid #223055;border-radius:10px;padding:8px 12px;cursor:pointer}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div class="row">
       <div><strong>GasBack Lite</strong> — <span id="pair">…</span></div>
       <div class="pill" id="cfg">slip: –, fee: – bps</div>
     </div>
     <div id="term"></div>
-    <div id="dbg" style="margin-top:12px;display:none"></div>
+    <div class="row" style="margin-top:12px">
+      <div class="btn" id="openModal">Open Terminal (fallback)</div>
+      <div style="opacity:.75;font-size:12px">Tip: add <code>?in=…&out=…&amt=0.5&slip=75&feeBps=10</code></div>
+    </div>
+    <div id="dbg" style="display:none;white-space:pre-wrap;font:12px ui-monospace,Menlo;background:#111;color:#9fc3ff;padding:8px;border-radius:8px;border:1px solid #223055"></div>
   </div>
 
 <script>
 (function(){
-  const log = (...args) => {
-    console.log(...args);
-    const el = document.getElementById('dbg');
-    el.style.display = 'block';
-    el.textContent += args.map(x => (typeof x==='string'?x:JSON.stringify(x,null,2))).join(' ') + "\n";
-  };
-
-  window.addEventListener('error', e => log('window.error:', e.message || e));
-  window.addEventListener('unhandledrejection', e => log('unhandledrejection:', e.reason?.message || String(e.reason)));
+  const log = (...a)=>{console.log(...a);const d=document.getElementById('dbg');d.style.display='block';d.textContent+=a.join(' ')+'\n';};
 
   const qs = new URLSearchParams(location.search);
   const inMint  = qs.get("in")  || "So11111111111111111111111111111111111111112"; // SOL
@@ -46,18 +42,17 @@
   document.getElementById("pair").textContent = short(inMint)+" → "+short(outMint);
   document.getElementById("cfg").textContent  = `slip: ${slip} bps, fee: ${feeBps} bps`;
 
-  if (!window.Jupiter) {
-    log("Jupiter non chargé. Un bloqueur ou une erreur réseau empêche 'https://terminal.jup.ag/main-v2.js'.");
-    return;
-  }
+  if (!window.Jupiter) { log("Jupiter non chargé."); return; }
+
+  // Renseigne ton ATA USDC ici pour encaisser (laisse vide pour tester l’affichage)
+  const FEE_ACCOUNTS = {
+    // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "TON_ATA_USDC_ICI"
+  };
 
   try {
-    const FEE_ACCOUNTS = {
-      // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "TON_ATA_USDC_ICI"
-    };
-
     window.Jupiter.init({
       container: document.getElementById("term"),
+      containerStyles: { height: "640px" },           // ⇦ force la hauteur côté widget
       displayMode: "integrated",
       integrated: true,
       endpoint: "https://api.mainnet-beta.solana.com",
@@ -65,13 +60,28 @@
       defaultOutputMint: outMint,
       defaultInputAmount: amt.toString(),
       slippageBps: slip,
-      platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
+      platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS },
+      onLoad: ()=>log("Terminal loaded"),
+      onSuccess: (sig)=>log("Swap success:", sig),
+      onError: (e)=>log("Terminal error:", e?.message||e)
     });
+    log("Jupiter.init OK");
+  } catch(e){ log("Init crash:", e?.message||e); }
 
-    log("Jupiter.init() appelé OK");
-  } catch (err) {
-    log("Erreur pendant init:", err && (err.message || err));
-  }
+  document.getElementById("openModal").onclick = ()=>{
+    try {
+      window.Jupiter.open();      // ⇦ ouvre le terminal en modal (fallback)
+      log("Modal opened");
+    } catch(e){ log("Modal error:", e?.message||e); }
+  };
+
+  // Si au bout de 1.5s rien n’est injecté, on déclenche le modal automatiquement
+  setTimeout(()=>{
+    if (!document.querySelector("#term iframe")) {
+      log("Iframe absent → fallback modal");
+      try { window.Jupiter.open(); } catch(e){ log("Auto-modal error:", e?.message||e); }
+    }
+  }, 1500);
 
   function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
 })();
