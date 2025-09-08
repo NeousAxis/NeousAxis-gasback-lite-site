@@ -1,7 +1,7 @@
 import fs from "fs";
 import { Connection, PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
+import utc from "dayjs/plugin/utc.js";
 dayjs.extend(utc);
 
 const RPC_URL = process.env.RPC_URL || "https://api.mainnet-beta.solana.com";
