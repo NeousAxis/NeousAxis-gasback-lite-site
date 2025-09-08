@@ -2,16 +2,16 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>GasBack Lite — Swap (fix)</title>
+  <title>GasBack Lite — Swap</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://terminal.jup.ag/main-v2.js"></script>
   <style>
     body{font-family:system-ui;margin:0;background:#0b0f19;color:#fff}
     .wrap{max-width:960px;margin:24px auto;padding:16px}
-    .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
     .pill{background:#141a2a;border:1px solid #223055;border-radius:999px;padding:6px 10px;font-size:12px}
-    #term{height:640px;border:1px solid #223055;border-radius:12px}
-    .btn{background:#1b2a4d;border:1px solid #223055;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .btn{background:#1b2a4d;border:1px solid #223055;border-radius:10px;padding:10px 14px;cursor:pointer}
+    a{color:#9fc3ff;text-decoration:none}
   </style>
 </head>
 <body>
@@ -20,18 +20,14 @@
       <div><strong>GasBack Lite</strong> — <span id="pair">…</span></div>
       <div class="pill" id="cfg">slip: –, fee: – bps</div>
     </div>
-    <div id="term"></div>
-    <div class="row" style="margin-top:12px">
-      <div class="btn" id="openModal">Open Terminal (fallback)</div>
-      <div style="opacity:.75;font-size:12px">Tip: add <code>?in=…&out=…&amt=0.5&slip=75&feeBps=10</code></div>
+    <div class="row">
+      <button class="btn" id="open">Open Swap</button>
+      <div style="opacity:.75;font-size:12px">Tip: URL params: <code>?in=…&out=…&amt=0.5&slip=75&feeBps=10</code></div>
     </div>
-    <div id="dbg" style="display:none;white-space:pre-wrap;font:12px ui-monospace,Menlo;background:#111;color:#9fc3ff;padding:8px;border-radius:8px;border:1px solid #223055"></div>
   </div>
 
 <script>
 (function(){
-  const log = (...a)=>{console.log(...a);const d=document.getElementById('dbg');d.style.display='block';d.textContent+=a.join(' ')+'\n';};
-
   const qs = new URLSearchParams(location.search);
   const inMint  = qs.get("in")  || "So11111111111111111111111111111111111111112"; // SOL
   const outMint = qs.get("out") || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC
@@ -42,46 +38,29 @@
   document.getElementById("pair").textContent = short(inMint)+" → "+short(outMint);
   document.getElementById("cfg").textContent  = `slip: ${slip} bps, fee: ${feeBps} bps`;
 
-  if (!window.Jupiter) { log("Jupiter non chargé."); return; }
-
-  // Renseigne ton ATA USDC ici pour encaisser (laisse vide pour tester l’affichage)
+  // ⚠️ Pour encaisser les fees, mets ton ATA USDC ici (laisse vide pour tester l’UI)
   const FEE_ACCOUNTS = {
     // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "TON_ATA_USDC_ICI"
   };
 
-  try {
-    window.Jupiter.init({
-      container: document.getElementById("term"),
-      containerStyles: { height: "640px" },           // ⇦ force la hauteur côté widget
-      displayMode: "integrated",
-      integrated: true,
-      endpoint: "https://api.mainnet-beta.solana.com",
-      defaultInputMint: inMint,
-      defaultOutputMint: outMint,
-      defaultInputAmount: amt.toString(),
-      slippageBps: slip,
-      platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS },
-      onLoad: ()=>log("Terminal loaded"),
-      onSuccess: (sig)=>log("Swap success:", sig),
-      onError: (e)=>log("Terminal error:", e?.message||e)
-    });
-    log("Jupiter.init OK");
-  } catch(e){ log("Init crash:", e?.message||e); }
+  if (!window.Jupiter) {
+    alert("Le script Jupiter ne s'est pas chargé. Désactive adblock/extension et recharge.");
+    return;
+  }
 
-  document.getElementById("openModal").onclick = ()=>{
-    try {
-      window.Jupiter.open();      // ⇦ ouvre le terminal en modal (fallback)
-      log("Modal opened");
-    } catch(e){ log("Modal error:", e?.message||e); }
-  };
+  window.Jupiter.init({
+    // MODE MODAL → robuste (pas de container intégré)
+    displayMode: "modal",
+    integrated: false,
+    endpoint: "https://api.mainnet-beta.solana.com",
+    defaultInputMint: inMint,
+    defaultOutputMint: outMint,
+    defaultInputAmount: amt.toString(),
+    slippageBps: slip,
+    platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
+  });
 
-  // Si au bout de 1.5s rien n’est injecté, on déclenche le modal automatiquement
-  setTimeout(()=>{
-    if (!document.querySelector("#term iframe")) {
-      log("Iframe absent → fallback modal");
-      try { window.Jupiter.open(); } catch(e){ log("Auto-modal error:", e?.message||e); }
-    }
-  }, 1500);
+  document.getElementById("open").onclick = () => window.Jupiter.toggle();
 
   function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
 })();
