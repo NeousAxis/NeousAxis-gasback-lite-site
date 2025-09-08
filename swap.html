@@ -315,12 +315,6 @@
                 <div class="exchange-title">🚀 Swap Tokens</div>
                 
                 <div class="jupiter-widget" id="jupiter-terminal">
-                    <div class="jupiter-placeholder">
-                        <h3>Loading Jupiter Terminal...</h3>
-                        <p>Please wait while we initialize the swap interface</p>
-                        <div style="margin-top: 30px; font-size: 3rem;">⚡</div>
-                        <p style="margin-top: 15px;">Fast • Secure • Low Fees</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -415,30 +409,24 @@
             };
             const ref = "www.whtg1.com";
 
-            // Configuration de Jupiter avec le paramètre ref si présent
-            const jupiterConfig = {
+            // Initialize Jupiter directly in the container
+            window.Jupiter.init({
                 displayMode: "integrated",
                 integrated: true,
-                endpoint,
+                endpoint: endpoint,
                 defaultInputMint: inMint,
                 defaultOutputMint: outMint,
                 defaultInputAmount: amt.toString(),
                 slippageBps: slip,
                 platformFeeAndAccounts: {
-                    feeBps,
+                    feeBps: feeBps,
                     feeAccounts: FEE_ACCOUNTS
                 },
-                containerElement: document.getElementById('jupiter-terminal')
-            };
-
-            // Ajout du paramètre ref si présent
-            if (ref) {
-                jupiterConfig.referral = {
+                referral: {
                     ref: ref
-                };
-            }
-
-            window.Jupiter.init(jupiterConfig);
+                },
+                containerElement: document.getElementById('jupiter-terminal')
+            });
         }
     </script>
 </body>
