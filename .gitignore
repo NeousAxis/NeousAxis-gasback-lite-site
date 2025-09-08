@@ -1,0 +1,18 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn.lock
+package-lock.json
+
+# Data/output
+data/*.txt
+data/*.log
+
+# Secrets/locaux
+.env
+.env*
+gasback-local/
+**/pay_usdc_local.js
+**/*.key
+**/*.pem
+**/*.secret
