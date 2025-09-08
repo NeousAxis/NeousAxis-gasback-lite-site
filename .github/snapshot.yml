@@ -1,8 +1,9 @@
 name: GasBack Snapshot
 on:
   schedule:
-    - cron: "0 10 * * 1"
+    - cron: "0 10 * * 1"   # Lundi 12:00 CET ≈ 10:00 UTC (été)
   workflow_dispatch: {}
+
 jobs:
   snapshot:
     runs-on: ubuntu-latest

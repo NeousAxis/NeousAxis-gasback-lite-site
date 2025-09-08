@@ -1,8 +1,9 @@
 name: GasBack Weekly
 on:
   schedule:
-    - cron: "5 10 * * 1"
+    - cron: "5 10 * * 1"   # 5 min après le snapshot
   workflow_dispatch: {}
+
 jobs:
   weekly:
     runs-on: ubuntu-latest
@@ -23,9 +24,9 @@ jobs:
           RPC_URL: https://api.mainnet-beta.solana.com
           GASD_MINT: ${{ vars.GASD_MINT }}
           FEE_BPS: "10"
-          TIER_MIN_1: "100"
-          TIER_MIN_2: "500"
-          TIER_MIN_3: "1000"
+          TIER_MIN_1: "100"    # 60%
+          TIER_MIN_2: "500"    # 70%
+          TIER_MIN_3: "1000"   # 80%
         run: node scripts/build_payout.js
       - name: Commit CSVs
         run: |

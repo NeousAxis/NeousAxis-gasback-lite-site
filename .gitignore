@@ -15,4 +15,5 @@ gasback-local/
 **/pay_usdc_local.js
 **/*.key
 **/*.pem
-**/*.secret
+**/*.secret.DS_Store
+node_modules/
