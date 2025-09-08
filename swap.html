@@ -37,27 +37,71 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+    }
+
+    .navbar {
+      background: var(--background);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      box-shadow: 0 2px 10px var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      padding: 20px;
+      height: 60px;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .nav-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .nav-tab:hover:not(.active) {
+      background: var(--card-bg);
+      color: var(--text-primary);
     }
 
     .container {
       max-width: 480px;
       width: 100%;
       margin: 40px auto;
+      padding: 0 20px;
     }
 
     .header {
       text-align: center;
       margin-bottom: 30px;
-    }
-
-    .logo {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
     }
 
     .subtitle {
@@ -130,105 +174,19 @@
       padding: 24px;
     }
 
-    .input-group {
-      margin-bottom: 16px;
+    .swap-placeholder {
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px dashed var(--border);
     }
 
-    .input-label {
-      font-size: 0.85rem;
-      font-weight: 500;
+    .swap-placeholder-text {
       color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-
-    .token-input {
-      display: flex;
-      align-items: center;
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
-      border: 1px solid var(--border);
-    }
-
-    .token-selector {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--background);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-weight: 600;
-      cursor: pointer;
-      min-width: 120px;
-    }
-
-    .token-logo {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .token-amount {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 1.3rem;
-      font-weight: 600;
-      text-align: right;
-      outline: none;
-      color: var(--text-primary);
-    }
-
-    .swap-icon {
-      display: flex;
-      justify-content: center;
-      padding: 12px 0;
-    }
-
-    .swap-arrow {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .swap-arrow:hover {
-      transform: rotate(180deg);
-      border-color: var(--primary);
-    }
-
-    .swap-button {
-      width: 100%;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 18px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 8px;
-    }
-
-    .swap-button:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(40, 141, 255, 0.3);
+      text-align: center;
     }
 
     .info-card {
@@ -268,6 +226,7 @@
       font-size: 0.8rem;
       color: var(--text-secondary);
       padding: 20px 0;
+      margin-top: auto;
     }
 
     @media (max-width: 480px) {
@@ -283,16 +242,37 @@
         padding: 16px;
       }
       
-      .token-amount {
-        font-size: 1.1rem;
+      .swap-placeholder {
+        height: 500px;
+      }
+      
+      .nav-container {
+        padding: 0 10px;
+      }
+      
+      .nav-tabs {
+        gap: 10px;
+      }
+      
+      .nav-tab {
+        padding: 6px 12px;
+        font-size: 0.9rem;
       }
     }
   </style>
 </head>
 <body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">GasBack Lite</div>
+      <div class="nav-tabs">
+        <button class="nav-tab active">Whales Tracker Bot</button>
+      </div>
+    </div>
+  </nav>
+
   <div class="container">
     <div class="header">
-      <div class="logo">GasBack Lite</div>
       <div class="subtitle">Swap on Solana with automatic cashback rewards</div>
     </div>
 
@@ -309,52 +289,27 @@
       </div>
 
       <div class="swap-container">
-        <div class="input-group">
-          <div class="input-label">You pay</div>
-          <div class="token-input">
-            <div class="token-selector">
-              <div class="token-logo">U</div>
-              <span>USDC</span>
+        <div id="jupiter-terminal" style="width: 100%; height: 600px;">
+          <div class="swap-placeholder">
+            <div class="swap-placeholder-text">
+              <p>Loading Jupiter Terminal...</p>
+              <p>If this takes too long, please disable ad blockers</p>
             </div>
-            <input type="text" class="token-amount" id="input-amount" value="100" placeholder="0.00">
           </div>
         </div>
-
-        <div class="swap-icon">
-          <div class="swap-arrow">↓</div>
-        </div>
-
-        <div class="input-group">
-          <div class="input-label">You receive</div>
-          <div class="token-input">
-            <div class="token-selector">
-              <div class="token-logo">S</div>
-              <span>SOL</span>
-            </div>
-            <input type="text" class="token-amount" id="output-amount" value="0.1" placeholder="0.00" readonly>
-          </div>
-        </div>
-
-        <button class="swap-button" id="open">
-          Connect Wallet & Swap
-        </button>
 
         <div class="info-card">
-          <div class="info-row">
-            <span class="info-label">Rate</span>
-            <span class="info-value">1 USDC ≈ 0.001 SOL</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Slippage</span>
-            <span class="info-value">0.5%</span>
-          </div>
           <div class="info-row">
             <span class="info-label">Platform Fee</span>
             <span class="info-value">0.10%</span>
           </div>
           <div class="info-row">
             <span class="info-label">Estimated Cashback</span>
-            <span class="info-value cashback-highlight">0.10 USDC</span>
+            <span class="info-value cashback-highlight">0.10% of swap value</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Referral</span>
+            <span class="info-value">www.whtg1.com</span>
           </div>
         </div>
       </div>
@@ -375,12 +330,6 @@
       const slip    = parseInt(qs.get("slip") || "50",10);
       const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
       const ref     = "www.whtg1.com"; // Paramètre de référence pour pointer vers www.whtg1.com
-
-      // Mise à jour des éléments d'interface
-      document.getElementById("input-amount").value = amt;
-      document.querySelector(".info-row:nth-child(2) .info-value").textContent = (slip / 100).toFixed(1) + "%";
-      document.querySelector(".info-row:nth-child(3) .info-value").textContent = (feeBps / 100).toFixed(2) + "%";
-      document.querySelector(".info-row:nth-child(4) .info-value").textContent = (amt * feeBps / 10000).toFixed(2) + " USDC";
 
       const RPCS = [
         "https://solana-rpc.publicnode.com",
@@ -418,8 +367,8 @@
 
       // Configuration de Jupiter avec le paramètre ref si présent
       const jupiterConfig = {
-        displayMode: "modal",
-        integrated: false,
+        displayMode: "integrated",
+        integrated: true,
         endpoint,
         defaultInputMint: inMint,
         defaultOutputMint: outMint,
@@ -434,10 +383,6 @@
       }
 
       window.Jupiter.init(jupiterConfig);
-
-      document.getElementById("open").onclick = () => window.Jupiter.toggle();
-
-      function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
     })();
   </script>
 </body>
