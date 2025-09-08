@@ -1,0 +1,258 @@
+0) Contexte (chemins)
+
+Dépôt GitHub : https://github.com/NeousAxis/NeousAxis-gasback-lite-site.git
+SITE Github : https://neousaxis.github.io/NeousAxis-gasback-lite-site/swap.html
+
+Racine locale : ~/gasback-lite-site
+
+
+1) Stabiliser la page swap.html (modal + fallback RPC)
+1.1 Remplacer swap.html par cette version
+
+Mode modal (fiable) + fallback RPC automatique + support feeBps/URL params.
+
+Fichier complet :
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>GasBack Lite — Swap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://terminal.jup.ag/main-v2.js"></script>
+  <style>
+    body{font-family:system-ui;margin:0;background:#0b0f19;color:#fff}
+    .wrap{max-width:960px;margin:24px auto;padding:16px}
+    .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .pill{background:#141a2a;border:1px solid #223055;border-radius:999px;padding:6px 10px;font-size:12px}
+    .btn{background:#1b2a4d;border:1px solid #223055;border-radius:10px;padding:10px 14px;cursor:pointer}
+    a{color:#9fc3ff;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="row">
+      <div><strong>GasBack Lite</strong> — <span id="pair">…</span></div>
+      <div class="pill" id="cfg">slip: –, fee: – bps</div>
+    </div>
+    <div class="row">
+      <button class="btn" id="open">Open Swap</button>
+      <div style="opacity:.75;font-size:12px">Params: <code>?in=…&out=…&amt=0.5&slip=75&feeBps=10</code></div>
+    </div>
+  </div>
+
+<script>
+(async function(){
+  const qs = new URLSearchParams(location.search);
+  const inMint  = qs.get("in")  || "So11111111111111111111111111111111111111112";
+  const outMint = qs.get("out") || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+  const amt     = qs.get("amt") || "0.10";
+  const slip    = parseInt(qs.get("slip") || "50",10);
+  const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
+
+  document.getElementById("pair").textContent = short(inMint)+" → "+short(outMint);
+  document.getElementById("cfg").textContent  = `slip: ${slip} bps, fee: ${feeBps} bps`;
+
+  const RPCS = [
+    "https://solana-rpc.publicnode.com",
+    "https://rpc.ankr.com/solana",
+    "https://api.mainnet-beta.solana.com"
+  ];
+  async function pickRpc(){
+    for(const url of RPCS){
+      try{
+        const r = await fetch(url, {
+          method:"POST",
+          headers:{ "content-type":"application/json" },
+          body: JSON.stringify({jsonrpc:"2.0",id:1,method:"getHealth"})
+        });
+        if(r.ok){
+          const j = await r.json().catch(()=>null);
+          if(j && (j.result==="ok" || j.error==null)) return url;
+        }
+      }catch(e){}
+    }
+    return RPCS[0];
+  }
+  const endpoint = await pickRpc();
+
+  const FEE_ACCOUNTS = {
+    // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "PASTE_YOUR_USDC_ATA"
+  };
+
+  if (!window.Jupiter) {
+    alert("Jupiter script blocked. Disable extensions/adblock for this page.");
+    return;
+  }
+
+  window.Jupiter.init({
+    displayMode: "modal",
+    integrated: false,
+    endpoint,
+    defaultInputMint: inMint,
+    defaultOutputMint: outMint,
+    defaultInputAmount: amt.toString(),
+    slippageBps: slip,
+    platformFeeAndAccounts: { feeBps, feeAccounts: FEE_ACCOUNTS }
+  });
+
+  document.getElementById("open").onclick = () => window.Jupiter.toggle();
+
+  function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
+})();
+</script>
+</body>
+</html>
+
+1.2 Commit/push
+cd ~/gasback-lite-site
+git add swap.html
+git commit -m "swap: modal + RPC fallback + params"
+git push
+
+2) Encaisser les fees (USDC) et test réel
+2.1 Ajouter l’ATA USDC
+
+Dans swap.html, renseigner l’ATA USDC dans FEE_ACCOUNTS (ligne indiquée). Commit/push.
+
+2.2 Test
+
+Ouvrir la page Pages (URL GitHub Pages).
+
+Connecter Phantom.
+
+Faire un petit swap SOL→USDC.
+
+Vérifier réception d’un petit montant d’USDC sur l’ATA (≈ feeBps/10000 du volume).
+
+3) Préparer les scripts et dépendances pour les workflows (si manquants)
+3.1 Dépendances (à la racine du repo)
+cd ~/gasback-lite-site
+npm init -y
+npm i @solana/web3.js @solana/spl-token dayjs dayjs-plugin-utc dayjs-plugin-timezone csv-parse csv-stringify
+git add package.json package-lock.json
+git commit -m "deps: add node libs for workflows"
+git push
+
+3.2 Vérifier / ajouter les scripts
+
+Les fichiers suivants doivent exister :
+
+scripts/build_volumes.js
+
+scripts/snapshot_gasd.js
+
+scripts/build_payout.js
+
+S’ils manquent, Qoder crée les fichiers avec le contenu fourni précédemment, commit/push.
+
+4) Variables & Secrets GitHub Actions (avec GitHub CLI)
+
+Si Qoder a gh installé et authentifié :
+
+cd ~/gasback-lite-site
+gh variable set GASD_MINT --body "<MINT_GASD>"
+gh secret   set FEE_USDC_ATA --body "<TON_ATA_USDC>"
+
+
+Sinon, le faire via l’UI GitHub (Settings → Actions → Variables/Secrets).
+
+5) Workflows en place et lancement
+
+Les fichiers doivent être là :
+
+.github/workflows/snapshot.yml
+
+.github/workflows/weekly.yml
+
+Lancer manuellement une première fois :
+
+cd ~/gasback-lite-site
+gh workflow run "GasBack Snapshot"
+gh workflow run "GasBack Weekly"
+
+
+Ou via l’UI GitHub (onglet Actions → Run workflow).
+
+Résultat attendu dans le repo :
+
+data/volumes.csv
+
+data/snapshot.json
+
+data/payout.csv
+
+6) Paiement hebdo local (sécurisé)
+
+Qoder doit préparer un dossier privé séparé (hors repo) et un script local.
+
+6.1 Installer le script local (RAW_CSV)
+mkdir -p ~/gasback-local
+cd ~/gasback-local
+npm init -y
+npm i @solana/web3.js @solana/spl-token bs58
+
+
+Créer pay_usdc_local.js avec la version RAW_CSV (déjà fournie).
+
+6.2 DRY-RUN puis envoi
+
+Dry-run :
+
+cd ~/gasback-local
+export PAYER_KEYFILE="$HOME/.config/solana/id.json"    # ou PAYER_PRIVATE_KEY base58
+export RAW_CSV="https://raw.githubusercontent.com/NeousAxis/NeousAxis-gasback-lite-site/main/data/payout.csv"
+export WEEKLY_CAP_USDC=2000
+export DRY_RUN=1
+node pay_usdc_local.js
+
+
+Envoi réel :
+
+unset DRY_RUN
+node pay_usdc_local.js
+
+7) Page publique + README
+7.1 GitHub Pages
+
+Settings → Pages → “Deploy from a branch” → main / / (root).
+
+7.2 README (déjà fourni)
+
+Si absent, Qoder ajoute le README EN (cashback tiers 50/60/70/80%, calendrier, formule), commit/push.
+
+8) Validation de bout en bout (checklist)
+
+La page s’ouvre et le bouton Open Swap affiche le terminal.
+
+Un swap SOL→USDC via la page crédite l’ATA USDC de l’intégrateur.
+
+Les workflows tournent et génèrent volumes.csv puis payout.csv.
+
+Le script local liste les paiements en DRY_RUN.
+
+L’envoi réel fonctionne sur de petits montants (USDC) → txids OK.
+
+9) Améliorations immédiates (si temps)
+
+Ajouter un fallback d’endpoint côté page (déjà fait).
+
+Permettre de fixer IN/OUT/montant via l’URL (déjà fait).
+
+Ajouter un paramètre ref=<wallet> dans l’URL et, plus tard, un memo côté agrégat pour attribution plus fiable.
+
+Logger les txids de payout dans data/payout_log_<date>.txt (workflows + README).
+
+Ce que Qoder doit livrer
+
+swap.html mis à jour et déployé (modal + RPC fallback + fee account).
+
+Secrets/vars Actions définis (FEE_USDC_ATA, GASD_MINT).
+
+Scripts présents et workflows fonctionnels (CSV générés).
+
+Script local prêt, dry-run effectué, paiement test effectué.
+
+README à jour.
+
+Si Qoder bloque à une étape, qu’il renvoie l’erreur exacte (ligne + message). Je donne la correction ciblée.
