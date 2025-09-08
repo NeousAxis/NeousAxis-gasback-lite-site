@@ -367,7 +367,9 @@
             document.getElementById(tabName + '-tab').classList.add('active');
             
             // Add active class to clicked button
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
             
             // If switching to swap tab, ensure Jupiter is initialized
             if (tabName === 'swap') {
@@ -375,47 +377,99 @@
             }
         }
 
-        // Jupiter initialization
+        // Jupiter initialization with enhanced error handling
         function initializeJupiter() {
-            if (window.Jupiter) {
-                try {
-                    window.Jupiter.init({
-                        displayMode: "integrated",
-                        integrated: true,
-                        endpoint: "https://api.mainnet-beta.solana.com",
-                        defaultInputMint: "So11111111111111111111111111111111111111112", // SOL
-                        defaultOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
-                        defaultInputAmount: "1",
-                        slippageBps: 100, // 1%
-                        platformFeeAndAccounts: {
-                            feeBps: 10, // 0.10%
-                            feeAccounts: {
-                                "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
-                            }
-                        },
-                        referral: {
-                            ref: "www.whtg1.com"
-                        },
-                        containerElement: document.getElementById("jupiter-terminal")
-                    });
-                } catch (error) {
-                    console.error("Error initializing Jupiter:", error);
+            console.log('Initializing Jupiter...');
+            
+            // Check if Jupiter is loaded
+            if (typeof window.Jupiter === 'undefined') {
+                console.error('Jupiter library not loaded');
+                document.getElementById("jupiter-terminal").innerHTML = 
+                    "<div style='padding: 40px; text-align: center; color: #f59e0b;'>" +
+                    "<h3>Jupiter Library Not Loaded</h3>" +
+                    "<p>Please refresh the page or check your internet connection</p>" +
+                    "</div>";
+                return;
+            }
+            
+            try {
+                // Ensure the container element exists
+                const containerElement = document.getElementById("jupiter-terminal");
+                if (!containerElement) {
+                    console.error('Jupiter container element not found');
+                    return;
+                }
+                
+                // Clear container content
+                containerElement.innerHTML = '';
+                
+                // Initialize Jupiter with proper configuration
+                window.Jupiter.init({
+                    displayMode: "integrated",
+                    integrated: true,
+                    endpoint: "https://api.mainnet-beta.solana.com",
+                    defaultInputMint: "So11111111111111111111111111111111111111112", // SOL
+                    defaultOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
+                    defaultInputAmount: "1000000", // 1 SOL in lamports for better default
+                    slippageBps: 100, // 1%
+                    platformFeeAndAccounts: {
+                        feeBps: 10, // 0.10%
+                        feeAccounts: {
+                            "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
+                        }
+                    },
+                    referral: {
+                        ref: "www.whtg1.com"
+                    },
+                    containerElement: containerElement,
+                    formProps: {
+                        fixedInputMint: false,
+                        fixedOutputMint: false,
+                        fixedAmount: false
+                    }
+                });
+                
+                console.log('Jupiter initialized successfully');
+            } catch (error) {
+                console.error("Error initializing Jupiter:", error);
+                document.getElementById("jupiter-terminal").innerHTML = 
+                    "<div style='padding: 40px; text-align: center; color: #f59e0b;'>" +
+                    "<h3>Jupiter Initialization Error</h3>" +
+                    "<p>" + error.message + "</p>" +
+                    "<p>Please refresh the page or check console for details</p>" +
+                    "</div>";
+            }
+        }
+
+        // Enhanced initialization with retry mechanism
+        function initializeJupiterWithRetry(maxRetries = 3, retryDelay = 1000) {
+            let retries = 0;
+            
+            function attemptInitialization() {
+                if (typeof window.Jupiter !== 'undefined') {
+                    initializeJupiter();
+                } else if (retries < maxRetries) {
+                    retries++;
+                    console.log(`Jupiter not loaded yet, retrying... (${retries}/${maxRetries})`);
+                    setTimeout(attemptInitialization, retryDelay);
+                } else {
+                    console.error('Failed to load Jupiter after', maxRetries, 'attempts');
                     document.getElementById("jupiter-terminal").innerHTML = 
                         "<div style='padding: 40px; text-align: center; color: #f59e0b;'>" +
-                        "<h3>Jupiter Initialization Error</h3>" +
-                        "<p>Please refresh the page or check console for details</p>" +
+                        "<h3>Failed to Load Jupiter</h3>" +
+                        "<p>Please check your internet connection and refresh the page</p>" +
                         "</div>";
                 }
-            } else {
-                // Retry initialization after a delay
-                setTimeout(initializeJupiter, 1000);
             }
+            
+            attemptInitialization();
         }
 
         // Initialize Jupiter when page loads
         window.addEventListener('load', function() {
+            console.log('Page loaded, initializing Jupiter...');
             // Small delay to ensure Jupiter script is loaded
-            setTimeout(initializeJupiter, 500);
+            setTimeout(initializeJupiterWithRetry, 1000);
         });
     </script>
 </body>
