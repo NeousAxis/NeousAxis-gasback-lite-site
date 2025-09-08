@@ -23,6 +23,31 @@ Integrator fee: `feeBps = 10` (0.10%) on swaps routed via Jupiter.
 
 ---
 
+## 💎 GAS DIAMOND (GASD) Token
+
+**Token Name**: GAS DIAMOND  
+**Symbol**: GASD  
+**Mint Address**: `662SG2n8Jk4HVzQDiFamQCUsHsde8nFEj7EsAEcGyhi2`  
+**Decimals**: 9
+
+### 📍 How to acquire GASD
+
+GASD tokens can be acquired through our community channels and partner exchanges. 
+The token is designed for cashback tier benefits in the GasBack Lite system.
+
+To view GASD in your wallet:
+1. Open Phantom or Backpack wallet
+2. Click "Add Token" or "Import Token"
+3. Enter the mint address: `662SG2n8Jk4HVzQDiFamQCUsHsde8nFEj7EsAEcGyhi2`
+4. Confirm to add GASD to your wallet
+
+### 🖼️ Token Logo
+
+The GASD token logo is available in the project repository. For wallet integrations 
+and token listings, please refer to the official token information.
+
+---
+
 ## 📖 How It Works (User)
 
 1. **Open** the GasBack Lite swap page (Jupiter widget embedded)
