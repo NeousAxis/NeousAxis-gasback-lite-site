@@ -1,4 +1,4 @@
-# GasBack Lite 🚀
+# JUPIER CASH 🚀
 
 **Automated USDC Cashback on Solana Swap Fees**
 
