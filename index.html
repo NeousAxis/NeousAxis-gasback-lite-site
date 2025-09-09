@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <title>GasBack Lite</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://terminal.jup.ag/main-v2.js"></script>
   <style>
     body {
       margin: 0;
@@ -20,65 +19,88 @@
     .header {
       text-align: center;
       margin-bottom: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #141a2a 0%, #1b2a4d 100%);
+      border: 1px solid #223055;
+      border-radius: 10px;
     }
     .header h1 {
       color: #f59e0b;
-      margin-bottom: 10px;
+      margin: 0 0 10px 0;
+      font-size: 2.5rem;
     }
-    #jupiter-terminal {
+    .header p {
+      margin: 0;
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+    .swap-container {
       width: 100%;
       height: 600px;
       border: 1px solid #223055;
       border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .feature-card {
+      background: #141a2a;
+      border: 1px solid #223055;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .feature-card h3 {
+      color: #f59e0b;
+      margin-top: 0;
+    }
+    .disclaimer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      opacity: 0.7;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>GasBack Lite</h1>
+      <h1>🔥 GasBack Lite 🔥</h1>
       <p>Swap tokens with up to 80% fee cashback</p>
     </div>
-    <div id="jupiter-terminal"></div>
+    
+    <div class="swap-container">
+      <iframe src="https://jup.ag/swap?inputCurrency=So11111111111111111111111111111111111111112&outputCurrency=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&referrer=www.whtg1.com&feeBps=10&feeAccount=Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"></iframe>
+    </div>
+    
+    <div class="features">
+      <div class="feature-card">
+        <h3>💰 Fee Cashback</h3>
+        <p>Get up to 80% of your swap fees back directly in your wallet</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔒 No Registration</h3>
+        <p>No accounts or personal information required</p>
+      </div>
+      <div class="feature-card">
+        <h3>⏱️ Weekly Payouts</h3>
+        <p>Receive your cashback every week based on your trading volume</p>
+      </div>
+    </div>
+    
+    <div class="disclaimer">
+      <p>Powered by Jupiter Aggregator • Cashback provided by GasBack Lite</p>
+    </div>
   </div>
-
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      // Attendre un peu pour s'assurer que le script est chargé
-      setTimeout(() => {
-        if (window.Jupiter) {
-          try {
-            window.Jupiter.init({
-              container: document.getElementById('jupiter-terminal'),
-              displayMode: 'integrated',
-              integrated: true,
-              endpoint: 'https://solana-rpc.publicnode.com',
-              defaultInputMint: 'So11111111111111111111111111111111111111112',
-              defaultOutputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-              platformFeeAndAccounts: {
-                feeBps: 10,
-                feeAccounts: {
-                  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v': 'Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78'
-                }
-              },
-              referral: {
-                ref: 'www.whtg1.com'
-              }
-            });
-          } catch (error) {
-            document.getElementById('jupiter-terminal').innerHTML = 
-              '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#141a2a;">' +
-              '<div>Failed to initialize swap interface. Please refresh the page.</div>' +
-              '</div>';
-          }
-        } else {
-          document.getElementById('jupiter-terminal').innerHTML = 
-            '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#141a2a;">' +
-            '<div>Swap interface not loaded. Please disable ad blockers and refresh.</div>' +
-            '</div>';
-        }
-      }, 1000);
-    });
-  </script>
 </body>
 </html>
