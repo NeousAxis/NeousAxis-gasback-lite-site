@@ -15,7 +15,10 @@
     
     <div id="swap-tab">
         <h2>Token Swap</h2>
-        <div id="jupiter-terminal"></div>
+        <!-- Jupiter Widget Container -->
+        <div id="jupiter-terminal-container">
+            <div id="jupiter-terminal"></div>
+        </div>
     </div>
     
     <div id="whale-tab" style="display:none;">
@@ -39,26 +42,45 @@
             
             // Show selected tab
             document.getElementById(tabName + '-tab').style.display = 'block';
-            
-            // Initialize Jupiter if swap tab is shown
-            if (tabName === 'swap') {
-                initJupiter();
-            }
         }
         
-        // Initialize Jupiter widget
+        // Enhanced Jupiter initialization with proper error handling
         function initJupiter() {
-            if (window.Jupiter) {
+            console.log('Initializing Jupiter Terminal...');
+            
+            // Check if Jupiter is available
+            if (typeof window.Jupiter === 'undefined') {
+                console.error('Jupiter Terminal library not loaded');
+                document.getElementById('jupiter-terminal').innerHTML = 
+                    '<div style="padding: 20px; color: red;">' +
+                    '<h3>Jupiter Terminal Failed to Load</h3>' +
+                    '<p>Please refresh the page or check your internet connection</p>' +
+                    '</div>';
+                return;
+            }
+            
+            try {
+                // Get the container element
+                const containerElement = document.getElementById('jupiter-terminal');
+                if (!containerElement) {
+                    console.error('Jupiter terminal container not found');
+                    return;
+                }
+                
+                // Clear any existing content
+                containerElement.innerHTML = '';
+                
+                // Initialize Jupiter Terminal with proper configuration
                 window.Jupiter.init({
                     displayMode: "integrated",
                     integrated: true,
                     endpoint: "https://api.mainnet-beta.solana.com",
-                    defaultInputMint: "So11111111111111111111111111111111111111112",
-                    defaultOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-                    defaultInputAmount: "1000000",
-                    slippageBps: 100,
+                    defaultInputMint: "So11111111111111111111111111111111111111112", // SOL
+                    defaultOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
+                    defaultInputAmount: "1000000", // 1 SOL in lamports
+                    slippageBps: 100, // 1%
                     platformFeeAndAccounts: {
-                        feeBps: 10,
+                        feeBps: 10, // 0.10% platform fee
                         feeAccounts: {
                             "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
                         }
@@ -66,15 +88,58 @@
                     referral: {
                         ref: "www.whtg1.com"
                     },
-                    containerElement: document.getElementById("jupiter-terminal")
+                    containerElement: containerElement
                 });
+                
+                console.log('Jupiter Terminal initialized successfully');
+            } catch (error) {
+                console.error('Error initializing Jupiter Terminal:', error);
+                document.getElementById('jupiter-terminal').innerHTML = 
+                    '<div style="padding: 20px; color: red;">' +
+                    '<h3>Jupiter Terminal Initialization Error</h3>' +
+                    '<p>' + error.message + '</p>' +
+                    '</div>';
             }
+        }
+        
+        // Initialize Jupiter with retry mechanism
+        function initJupiterWithRetry(maxRetries = 3, retryDelay = 1000) {
+            let retries = 0;
+            
+            function attemptInit() {
+                if (typeof window.Jupiter !== 'undefined') {
+                    initJupiter();
+                } else if (retries < maxRetries) {
+                    retries++;
+                    console.log(`Jupiter not loaded yet, retrying... (${retries}/${maxRetries})`);
+                    setTimeout(attemptInit, retryDelay);
+                } else {
+                    console.error('Failed to load Jupiter after', maxRetries, 'attempts');
+                    document.getElementById('jupiter-terminal').innerHTML = 
+                        '<div style="padding: 20px; color: red;">' +
+                        '<h3>Failed to Load Jupiter Terminal</h3>' +
+                        '<p>Please check your internet connection and refresh the page</p>' +
+                        '</div>';
+                }
+            }
+            
+            attemptInit();
         }
         
         // Initialize Jupiter when page loads
         window.addEventListener('load', function() {
-            initJupiter();
+            console.log('Page loaded, initializing Jupiter Terminal...');
+            setTimeout(initJupiterWithRetry, 1000);
         });
+        
+        // Also initialize when swap tab is shown
+        const originalShowTab = showTab;
+        showTab = function(tabName) {
+            originalShowTab(tabName);
+            if (tabName === 'swap') {
+                setTimeout(initJupiterWithRetry, 500);
+            }
+        };
     </script>
 </body>
 </html>
