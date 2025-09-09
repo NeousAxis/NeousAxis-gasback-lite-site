@@ -226,5 +226,5 @@ No. Cashback depends on actual swap volumes and fees collected. GASD does not gu
 
 ## 📞 Contact
 
-- **Support**: hello@whtg1.com
+- **Support**: hello@jupiter-cash.com
 - **Status / CSVs**: see the data/ folder in this repo (updated weekly)
