@@ -1,53 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8" />
-    <title>GasBack Lite</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jupiter Terminal (Embedded)</title>
     <script src="https://terminal.jup.ag/main-v2.js"></script>
     <style>
-        body {
-            margin: 0;
-            background: #000;
-            color: #fff;
-            font-family: system-ui;
-        }
-        #jupiter-terminal {
-            width: 100%;
-            height: 600px;
-        }
+      body {
+        margin: 0;
+        background: #000;
+        color: #fff;
+        font-family: system-ui;
+      }
+      #terminal {
+        width: 100%;
+        height: 600px;
+      }
     </style>
-</head>
-<body>
-    <h1>GasBack Lite</h1>
-    <div id="jupiter-terminal"></div>
-
+  </head>
+  <body>
+    <h1>Test Widget Jupiter</h1>
+    <div id="terminal"></div>
     <script>
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            if (window.Jupiter) {
-                window.Jupiter.init({
-                    container: document.getElementById("jupiter-terminal"),
-                    displayMode: "integrated",
-                    integrated: true,
-                    endpoint: "https://solana-rpc.publicnode.com",
-                    defaultInputMint: "So11111111111111111111111111111111111111112",
-                    defaultOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-                    platformFeeAndAccounts: { 
-                        feeBps: 10, 
-                        feeAccounts: {
-                            "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
-                        }
-                    },
-                    referral: {
-                        ref: "www.whtg1.com"
-                    }
-                });
-            } else {
-                document.getElementById("jupiter-terminal").innerHTML = "<p>Erreur: Widget Jupiter non chargé. Veuillez désactiver les bloqueurs de publicité et recharger la page.</p>";
-            }
-        }, 1000);
-    });
+      window.addEventListener("DOMContentLoaded", () => {
+        if (window.Jupiter) {
+          window.Jupiter.init({
+            container: document.getElementById("terminal"),
+            displayMode: "integrated",
+            integrated: true,
+            endpoint: "https://solana-rpc.publicnode.com",
+          });
+        } else {
+          document.getElementById("terminal").innerHTML = 
+            "<p>Erreur: Widget Jupiter non chargé.</p>" +
+            "<p>Veuillez vérifier:</p>" +
+            "<ul>" +
+            "<li>Que vous n'avez pas de bloqueur de publicité/contenu actif</li>" +
+            "<li>Que vous pouvez accéder à https://terminal.jup.ag/main-v2.js</li>" +
+            "<li>Que JavaScript est activé dans votre navigateur</li>" +
+            "</ul>";
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
