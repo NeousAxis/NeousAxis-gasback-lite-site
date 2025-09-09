@@ -1,4 +1,4 @@
-# JUPIER CASH 🚀
+# JUPITER CASH 🚀
 
 **Automated USDC Cashback on Solana Swap Fees**
 
