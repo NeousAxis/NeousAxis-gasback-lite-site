@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <title>GasBack Lite</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://terminal.jup.ag/main-v2.js"></script>
   <style>
     body {
       margin: 0;
@@ -67,6 +66,19 @@
       border-radius: 8px;
       padding: 15px;
     }
+    .swap-container {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #223055;
+      border-radius: 10px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
     .instructions {
       background: #1b2a4d;
       border: 1px solid #223055;
@@ -79,27 +91,17 @@
 <body>
   <div class="wrap">
     <div class="header">
-      <div><strong>GasBack Lite</strong> — <span id="pair">…</span></div>
-      <div class="pill" id="cfg">slip: –, fee: – bps</div>
+      <div><strong>GasBack Lite</strong></div>
+      <div class="pill">www.whtg1.com</div>
     </div>
     
     <div class="instructions">
-      <h3>Comment utiliser GasBack Lite</h3>
-      <ol>
-        <li>Cliquez sur le bouton "Open Token Swap" ci-dessous</li>
-        <li>Effectuez votre échange de tokens dans le widget</li>
-        <li>Fermez le widget pour revenir à cette page</li>
-        <li>Consultez les informations ci-dessous pour comprendre le fonctionnement</li>
-      </ol>
+      <h3>Token Swap Interface</h3>
+      <p>Utilisez l'interface ci-dessous pour échanger vos tokens avec cashback jusqu'à 80% :</p>
     </div>
     
-    <div style="text-align: center; margin: 30px 0;">
-      <button class="btn" id="open">
-        Open Token Swap
-      </button>
-      <div style="margin-top: 15px; opacity:.75;font-size:12px">
-        Up to 80% fee cashback on your wallet
-      </div>
+    <div class="swap-container">
+      <iframe src="https://jup.ag/swap?inputCurrency=So11111111111111111111111111111111111111112&outputCurrency=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&referrer=www.whtg1.com&feeBps=10&feeAccount=Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"></iframe>
     </div>
     
     <div class="info-section">
@@ -119,89 +121,6 @@
         </div>
       </div>
     </div>
-    
-    <div class="info-section">
-      <h2>FAQ</h2>
-      <div class="info-grid">
-        <div class="info-card">
-          <h3>Fermeture du widget</h3>
-          <p>Pour fermer le widget d'échange, cliquez sur le bouton "X" en haut à droite du widget ou appuyez sur la touche Échap.</p>
-        </div>
-        <div class="info-card">
-          <h3>Problèmes d'affichage</h3>
-          <p>Si le widget ne s'affiche pas, désactivez votre bloqueur de publicité/contenu et rechargez la page.</p>
-        </div>
-        <div class="info-card">
-          <h3>Cashback</h3>
-          <p>Les remboursements sont calculés chaque semaine et versés manuellement en USDC.</p>
-        </div>
-      </div>
-    </div>
   </div>
-
-<script>
-(function(){
-  const qs = new URLSearchParams(location.search);
-  const inMint  = qs.get("in")  || "So11111111111111111111111111111111111111112"; // SOL
-  const outMint = qs.get("out") || "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC
-  const amt     = qs.get("amt") || "0.10";
-  const slip    = parseInt(qs.get("slip") || "50",10);
-  const feeBps  = parseInt(qs.get("feeBps")|| "10",10);
-
-  document.getElementById("pair").textContent = short(inMint)+" → "+short(outMint);
-  document.getElementById("cfg").textContent  = `slip: ${slip} bps, fee: ${feeBps} bps`;
-
-  // Renseigne TON ATA USDC pour encaisser des fees :
-  const FEE_ACCOUNTS = {
-    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"
-  };
-
-  // RPC public fiable
-  const endpoint = "https://solana-rpc.publicnode.com";
-
-  // Vérifier si le script Jupiter est chargé
-  if (!window.Jupiter) { 
-    // Tenter de recharger le script
-    const script = document.createElement('script');
-    script.src = "https://terminal.jup.ag/main-v2.js";
-    script.onload = function() {
-      initJupiter();
-    };
-    document.head.appendChild(script);
-  } else {
-    initJupiter();
-  }
-
-  function initJupiter() {
-    if (!window.Jupiter) { 
-      document.getElementById("open").innerHTML = "Erreur: Widget non disponible";
-      return; 
-    }
-
-    window.Jupiter.init({
-      displayMode: "modal",
-      integrated: false,
-      endpoint,
-      defaultInputMint: inMint,
-      defaultOutputMint: outMint,
-      defaultInputAmount: amt.toString(),
-      slippageBps: slip,
-      platformFeeAndAccounts: { 
-        feeBps: 10, 
-        feeAccounts: FEE_ACCOUNTS 
-      },
-      referral: {
-        ref: "www.whtg1.com"
-      }
-    });
-
-    document.getElementById("open").onclick = () => {
-      window.Jupiter.toggle();
-    };
-  }
-
-  function short(x){ return x.slice(0,4)+"…"+x.slice(-4); }
-})();
-</script>
 </body>
 </html>
