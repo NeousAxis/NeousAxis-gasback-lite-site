@@ -15,7 +15,7 @@ Integrator fee: `feeBps = 10` (0.10%) on swaps routed via Jupiter.
 | GASD balance at snapshot | Cashback rate on fees |
 |--------------------------|-----------------------|
 | < 100 GASD               | 50%                   |
-| ≥ 100 GASD               | 60%                   |
+| ≥ 300 GASD               | 60%                   |
 | ≥ 500 GASD               | 70%                   |
 | ≥ 1,000 GASD             | 80%                   |
 
