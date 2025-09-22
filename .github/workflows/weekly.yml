@@ -1,4 +1,4 @@
-name: GasBack Weekly
+name: Jupiter Cash Weekly
 on:
   schedule:
     - cron: "5 10 * * 1"
@@ -23,7 +23,12 @@ jobs:
           RPC_URL: https://api.mainnet-beta.solana.com
           GASD_MINT: ${{ vars.GASD_MINT }}
         run: node scripts/snapshot_gasd.js
-      - name: Step C — Build payout.csv (tiers)
+      - name: Step C — Calculate GASD distribution
+        env:
+          RPC_URL: https://api.mainnet-beta.solana.com
+          GASD_MINT: ${{ vars.GASD_MINT }}
+        run: node scripts/distribute_gasd.js
+      - name: Step D — Build payout.csv (tiers)
         env:
           RPC_URL: https://api.mainnet-beta.solana.com
           GASD_MINT: ${{ vars.GASD_MINT }}
@@ -34,8 +39,8 @@ jobs:
         run: node scripts/build_payout.js
       - name: Commit CSVs
         run: |
-          git config user.name "gasback-bot"
-          git config user.email "bot@example.com"
+          git config user.name "jupiter-cash-bot"
+          git config user.email "bot@jupiter-cash.com"
           git add -A
-          git commit -m "Weekly volumes & payout CSVs" || echo "No changes"
+          git commit -m "Weekly volumes, GASD distribution & payout CSVs" || echo "No changes"
           git push || true

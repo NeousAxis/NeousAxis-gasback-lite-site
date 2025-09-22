@@ -1,4 +1,4 @@
-name: GasBack Snapshot
+name: Jupiter Cash Snapshot
 on:
   schedule:
     - cron: "0 10 * * 1"
@@ -19,8 +19,8 @@ jobs:
         run: node scripts/snapshot_gasd.js
       - name: Commit snapshot
         run: |
-          git config user.name "gasback-bot"
-          git config user.email "bot@example.com"
+          git config user.name "jupiter-cash-bot"
+          git config user.email "bot@jupiter-cash.com"
           git add -A
           git commit -m "Snapshot GASD (weekly)" || echo "No changes"
           git push || true

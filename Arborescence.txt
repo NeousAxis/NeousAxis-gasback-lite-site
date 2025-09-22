@@ -1,4 +1,4 @@
-gasback-lite-site/
+jupiter-cash-site/
 ├─ package.json              # à la racine du REPO (nécessaire pour les Actions)
 ├─ swap.html                 # page Jupiter
 ├─ scripts/                  # scripts exécutés par les Actions
