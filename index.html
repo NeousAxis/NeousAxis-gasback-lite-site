@@ -124,10 +124,13 @@
         <h3>💰 Earn GASD</h3>
         <p>1 GASD = $1 USD swap volume</p>
       </div>
-
       <div class="feature-card">
         <h3>📈 Cashback</h3>
         <p>Up to 80% of fees back</p>
+      </div>
+      <div class="feature-card">
+        <h3>⏱️ Weekly Payouts</h3>
+        <p>Receive your rewards every Monday</p>
       </div>
     </div>
     
@@ -148,14 +151,9 @@
         <h3>💸 Get Cashback</h3>
         <p>Receive up to 80% of your swap fees back in USDC weekly</p>
       </div>
-
       <div class="feature-card">
         <h3>🔒 No Staking</h3>
         <p>Hold GASD tokens to increase your cashback tier - no staking needed</p>
-      </div>
-      <div class="feature-card">
-        <h3>⏱️ Weekly Payouts</h3>
-        <p>Receive your GASD tokens and USDC cashback every Monday</p>
       </div>
     </div>
     
@@ -204,24 +202,27 @@
   </div>
   
   <script>
-    window.Jupiter.init({
-      displayMode: "integrated",
-      integratedTargetId: "jupiter-terminal",
-      endpoint: "https://api.mainnet-beta.solana.com",
-      platformFeeAndAccounts: {
-        feeBps: 10,
-        feeAccounts: [
-          {
-            pubkey: "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78",
-            feeShare: 100,
-          }
-        ]
-      },
-      defaultExplorer: "SolanaFM",
-      formProps: {
-        initialInputMint: "So11111111111111111111111111111111111111112",
-        initialOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-      }
+    // Attendre que le DOM soit chargé avant d'initialiser Jupiter
+    document.addEventListener('DOMContentLoaded', function() {
+      window.Jupiter.init({
+        displayMode: "integrated",
+        integratedTargetId: "jupiter-terminal",
+        endpoint: "https://api.mainnet-beta.solana.com",
+        platformFeeAndAccounts: {
+          feeBps: 10,
+          feeAccounts: [
+            {
+              pubkey: "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78",
+              feeShare: 100,
+            }
+          ]
+        },
+        defaultExplorer: "SolanaFM",
+        formProps: {
+          initialInputMint: "So11111111111111111111111111111111111111112",
+          initialOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        }
+      });
     });
   </script>
 </body>
