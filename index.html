@@ -37,10 +37,26 @@
     }
     .features {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 32px;
-      margin: 40px 0 50px 0;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin: 40px auto 50px auto;
       padding: 0 20px;
+      max-width: 1200px;
+    }
+    
+    @media (max-width: 1024px) {
+      .features {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .features {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 0 16px;
+      }
     }
     .feature-card {
       background: radial-gradient(circle at center, #000000 0%, #1e293b 70%, #334155 100%);
