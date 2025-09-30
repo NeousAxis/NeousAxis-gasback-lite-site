@@ -1,152 +1,48 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jupiter Cash - Test Widget</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-      color: white;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    
-    .container {
-      max-width: 600px;
-      width: 100%;
-      text-align: center;
-    }
-    
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      background: linear-gradient(45deg, #ffd700, #ffed4e);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .subtitle {
-      font-size: 1.2rem;
-      margin-bottom: 40px;
-      opacity: 0.8;
-    }
-    
-    #jupiter-terminal {
-      width: 100%;
-      height: 600px;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      margin: 20px 0;
-    }
-    
-    .loading {
-      padding: 40px;
-      text-align: center;
-      font-size: 1.1rem;
-      opacity: 0.7;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jupiter Cash - Test Widget</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .jupiter-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Jupiter Cash</h1>
-    <p class="subtitle">Widget de swap Jupiter - Version test</p>
-    
-    <div id="jupiter-terminal">
-      <div class="loading">Chargement du widget Jupiter...</div>
+    <div class="container">
+        <h1>Jupiter Terminal - Iframe Test</h1>
+        <iframe 
+            class="jupiter-iframe"
+            src="https://terminal.jup.ag/"
+            title="Jupiter Terminal">
+        </iframe>
     </div>
-  </div>
-
-  <script>
-    // Fonction pour initialiser Jupiter avec une approche plus simple
-    function initJupiter() {
-      console.log('🔄 Tentative d\'initialisation Jupiter...');
-      
-      const targetElement = document.getElementById('jupiter-terminal');
-      console.log('Element trouvé:', !!targetElement);
-      console.log('Jupiter disponible:', !!window.Jupiter);
-      
-      if (targetElement && window.Jupiter) {
-        try {
-          console.log('🚀 Initialisation du widget Jupiter...');
-          
-          // Configuration simplifiée
-          const config = {
-            displayMode: "integrated",
-            integratedTargetId: "jupiter-terminal",
-            endpoint: "https://api.mainnet-beta.solana.com",
-            platformFeeAndAccounts: {
-              feeBps: 10,
-              feeAccounts: [
-                {
-                  pubkey: "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78",
-                  feeShare: 100,
-                }
-              ]
-            },
-            defaultExplorer: "SolanaFM"
-          };
-          
-          console.log('Configuration:', config);
-          window.Jupiter.init(config);
-          console.log('✅ Widget Jupiter initialisé !');
-          
-        } catch (error) {
-          console.error('❌ Erreur Jupiter:', error);
-          console.error('Stack:', error.stack);
-          
-          // Retry après erreur
-          setTimeout(() => {
-            console.log('🔄 Retry après erreur...');
-            initJupiter();
-          }, 2000);
-        }
-      } else {
-        console.log('⏳ En attente... Retry dans 1s');
-        setTimeout(initJupiter, 1000);
-      }
-    }
-
-    // Charger le script Jupiter dynamiquement
-    function loadJupiterScript() {
-      console.log('📥 Chargement du script Jupiter...');
-      
-      const script = document.createElement('script');
-      script.src = 'https://terminal.jup.ag/main-v2.js';
-      script.async = true;
-      
-      script.onload = function() {
-        console.log('✅ Script Jupiter chargé');
-        setTimeout(initJupiter, 500);
-      };
-      
-      script.onerror = function() {
-        console.error('❌ Erreur de chargement du script Jupiter');
-        setTimeout(loadJupiterScript, 3000);
-      };
-      
-      document.head.appendChild(script);
-    }
-
-    // Démarrer le processus
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('📄 DOM prêt, chargement Jupiter...');
-      loadJupiterScript();
-    });
-  </script>
 </body>
 </html>
