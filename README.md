@@ -16,8 +16,8 @@ Integrator fee: `feeBps = 10` (0.10%) on swaps routed via Jupiter.
 |--------------------------|-----------------------|
 | < 100 GASD               | 50%                   |
 | ≥ 300 GASD               | 60%                   |
-| ≥ 500 GASD               | 70%                   |
-| ≥ 1,000 GASD             | 80%                   |
+| ≥ 1,000 GASD             | 70%                   |
+| ≥ 10,000 GASD            | 80%                   |
 
 **Payout**: Weekly in USDC to the same wallet used for swaps.
 
@@ -231,7 +231,7 @@ All txids are visible on-chain. You can append them to a log for audit.
 | **Burn rate** | 200 bps (2.00%) |
 | **Platform rate** | 180 bps (1.80%) |
 | **User cashback** | Up to 80% of fees |
-| **Tiers** | <100:50%, ≥100:60%, ≥500:70%, ≥1000:80% |
+| **Tiers** | <100:50%, ≥300:60%, ≥1000:70%, ≥10000:80% |
 | **Snapshot** | Monday 12:00 CET |
 | **Payout asset** | USDC (Solana) |
 | **Initial pairs** | SOL ↔ USDC (expand later) |

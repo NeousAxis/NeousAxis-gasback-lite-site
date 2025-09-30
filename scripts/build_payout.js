@@ -4,9 +4,9 @@ const OUT_DIR = "data";
 const FEE_BPS = parseInt(process.env.FEE_BPS || "10", 10);
 const BURN_BPS = 200; // 2% des frais pour le burn direct (200 bps)
 const PLATFORM_BPS = FEE_BPS - BURN_BPS; // 18% pour la plateforme (80% pour l'utilisateur)
-const T1 = parseFloat(process.env.TIER_MIN_1 || "100");   // 60%
-const T2 = parseFloat(process.env.TIER_MIN_2 || "500");   // 70%
-const T3 = parseFloat(process.env.TIER_MIN_3 || "1000");  // 80%
+const T1 = parseFloat(process.env.TIER_MIN_1 || "300");   // 60%
+const T2 = parseFloat(process.env.TIER_MIN_2 || "1000");  // 70%
+const T3 = parseFloat(process.env.TIER_MIN_3 || "10000"); // 80%
 
 function readCSV(path) {
   if (!fs.existsSync(path)) return [];
