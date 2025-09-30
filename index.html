@@ -110,7 +110,7 @@
       font-size: 1.4rem;
     }
   </style>
-  <script src="https://terminal.jup.ag/main-v2.js" data-preload></script>
+  <script src="https://terminal.jup.ag/main-v2.js"></script>
 </head>
 <body>
   <div class="container">
@@ -202,27 +202,31 @@
   </div>
   
   <script>
-    // Attendre que le DOM soit chargé avant d'initialiser Jupiter
-    document.addEventListener('DOMContentLoaded', function() {
-      window.Jupiter.init({
-        displayMode: "integrated",
-        integratedTargetId: "jupiter-terminal",
-        endpoint: "https://api.mainnet-beta.solana.com",
-        platformFeeAndAccounts: {
-          feeBps: 10,
-          feeAccounts: [
-            {
-              pubkey: "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78",
-              feeShare: 100,
-            }
-          ]
-        },
-        defaultExplorer: "SolanaFM",
-        formProps: {
-          initialInputMint: "So11111111111111111111111111111111111111112",
-          initialOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-        }
-      });
+    // Attendre que le script Jupiter soit chargé et que le DOM soit prêt
+    window.addEventListener('load', function() {
+      if (window.Jupiter) {
+        window.Jupiter.init({
+          displayMode: "integrated",
+          integratedTargetId: "jupiter-terminal",
+          endpoint: "https://api.mainnet-beta.solana.com",
+          platformFeeAndAccounts: {
+            feeBps: 10,
+            feeAccounts: [
+              {
+                pubkey: "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78",
+                feeShare: 100,
+              }
+            ]
+          },
+          defaultExplorer: "SolanaFM",
+          formProps: {
+            initialInputMint: "So11111111111111111111111111111111111111112",
+            initialOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          }
+        });
+      } else {
+        console.error('Jupiter script not loaded');
+      }
     });
   </script>
 </body>
