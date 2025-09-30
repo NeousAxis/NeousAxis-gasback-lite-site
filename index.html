@@ -68,6 +68,11 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       margin: 20px 0;
     }
+    #jupiter-terminal {
+      width: 100%;
+      height: 600px;
+      margin: 20px 0;
+    }
     iframe {
       width: 100%;
       height: 100%;
@@ -105,12 +110,13 @@
       font-size: 1.4rem;
     }
   </style>
+  <script src="https://terminal.jup.ag/main-v2.js" data-preload></script>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>Jupiter Cash</h1>
-      <p>Swap tokens and earn GASD automatically</p>
+      <p>Swap tokens and earn Cashback automatically</p>
     </div>
     
     <div class="features">
@@ -118,10 +124,7 @@
         <h3>💰 Earn GASD</h3>
         <p>1 GASD = $1 USD swap volume</p>
       </div>
-      <div class="feature-card">
-        <h3>🔥 Direct Burn</h3>
-        <p>2% of fees burned automatically</p>
-      </div>
+
       <div class="feature-card">
         <h3>📈 Cashback</h3>
         <p>Up to 80% of fees back</p>
@@ -129,9 +132,7 @@
     </div>
     
     <h2 class="section-title">Swap & Earn</h2>
-    <div class="swap-container">
-      <iframe src="https://jup.ag/swap?inputCurrency=So11111111111111111111111111111111111111112&outputCurrency=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&referrer=www.whtg1.com&feeBps=10&feeAccount=Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78"></iframe>
-    </div>
+    <div id="jupiter-terminal"></div>
     
     <h2 class="section-title">How It Works</h2>
     <div class="features">
@@ -147,10 +148,7 @@
         <h3>💸 Get Cashback</h3>
         <p>Receive up to 80% of your swap fees back in USDC weekly</p>
       </div>
-      <div class="feature-card">
-        <h3>🔥 Token Burn</h3>
-        <p>2% of all fees are automatically burned to reduce supply</p>
-      </div>
+
       <div class="feature-card">
         <h3>🔒 No Staking</h3>
         <p>Hold GASD tokens to increase your cashback tier - no staking needed</p>
@@ -197,12 +195,34 @@
           </tr>
         </tbody>
       </table>
-      <p style="text-align: center; margin-top: 10px;"><span class="highlight">New:</span> 2% of fees are directly burned. No staking required!</p>
+
     </div>
     
     <div class="disclaimer">
       <p>Powered by Jupiter Aggregator • Cashback provided by Jupiter Cash</p>
     </div>
   </div>
+  
+  <script>
+    window.Jupiter.init({
+      displayMode: "integrated",
+      integratedTargetId: "jupiter-terminal",
+      endpoint: "https://api.mainnet-beta.solana.com",
+      platformFeeAndAccounts: {
+        feeBps: 10,
+        feeAccounts: [
+          {
+            pubkey: "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78",
+            feeShare: 100,
+          }
+        ]
+      },
+      defaultExplorer: "SolanaFM",
+      formProps: {
+        initialInputMint: "So11111111111111111111111111111111111111112",
+        initialOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      }
+    });
+  </script>
 </body>
 </html><!-- Force refresh -->
