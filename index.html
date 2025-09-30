@@ -202,31 +202,43 @@
   </div>
   
   <script>
-    // Attendre que le script Jupiter soit chargé et que le DOM soit prêt
-    window.addEventListener('load', function() {
-      if (window.Jupiter) {
-        window.Jupiter.init({
-          displayMode: "integrated",
-          integratedTargetId: "jupiter-terminal",
-          endpoint: "https://api.mainnet-beta.solana.com",
-          platformFeeAndAccounts: {
-            feeBps: 10,
-            feeAccounts: [
-              {
-                pubkey: "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78",
-                feeShare: 100,
-              }
-            ]
-          },
-          defaultExplorer: "SolanaFM",
-          formProps: {
-            initialInputMint: "So11111111111111111111111111111111111111112",
-            initialOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-          }
-        });
+    // Fonction pour initialiser Jupiter avec retry
+    function initJupiter() {
+      const targetElement = document.getElementById('jupiter-terminal');
+      if (targetElement && window.Jupiter) {
+        try {
+          window.Jupiter.init({
+            displayMode: "integrated",
+            integratedTargetId: "jupiter-terminal",
+            endpoint: "https://api.mainnet-beta.solana.com",
+            platformFeeAndAccounts: {
+              feeBps: 10,
+              feeAccounts: [
+                {
+                  pubkey: "Az9kgSbqq72dPTUKtMuFEp1qQhqi3gUobysNFNQp9K78",
+                  feeShare: 100,
+                }
+              ]
+            },
+            defaultExplorer: "SolanaFM",
+            formProps: {
+              initialInputMint: "So11111111111111111111111111111111111111112",
+              initialOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            }
+          });
+          console.log('Jupiter widget initialized successfully');
+        } catch (error) {
+          console.error('Error initializing Jupiter:', error);
+        }
       } else {
-        console.error('Jupiter script not loaded');
+        console.log('Retrying Jupiter initialization...');
+        setTimeout(initJupiter, 500);
       }
+    }
+
+    // Démarrer l'initialisation après le chargement complet
+    window.addEventListener('load', function() {
+      setTimeout(initJupiter, 1000);
     });
   </script>
 </body>
