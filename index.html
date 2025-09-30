@@ -71,21 +71,21 @@
     </div>
   </div>
 
-  <!-- Jupiter Terminal Script -->
-  <script src="https://terminal.jup.ag/main-v2.js"></script>
-  
   <script>
-    // Fonction pour initialiser Jupiter avec retry et logs détaillés
+    // Fonction pour initialiser Jupiter avec une approche plus simple
     function initJupiter() {
-      console.log('Tentative d\'initialisation Jupiter...');
-      console.log('Element jupiter-terminal:', document.getElementById('jupiter-terminal'));
-      console.log('Window.Jupiter:', window.Jupiter);
+      console.log('🔄 Tentative d\'initialisation Jupiter...');
       
       const targetElement = document.getElementById('jupiter-terminal');
+      console.log('Element trouvé:', !!targetElement);
+      console.log('Jupiter disponible:', !!window.Jupiter);
+      
       if (targetElement && window.Jupiter) {
         try {
-          console.log('Initialisation du widget Jupiter...');
-          window.Jupiter.init({
+          console.log('🚀 Initialisation du widget Jupiter...');
+          
+          // Configuration simplifiée
+          const config = {
             displayMode: "integrated",
             integratedTargetId: "jupiter-terminal",
             endpoint: "https://api.mainnet-beta.solana.com",
@@ -98,32 +98,54 @@
                 }
               ]
             },
-            defaultExplorer: "SolanaFM",
-            formProps: {
-              initialInputMint: "So11111111111111111111111111111111111111112",
-              initialOutputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-            }
-          });
-          console.log('✅ Widget Jupiter initialisé avec succès !');
+            defaultExplorer: "SolanaFM"
+          };
+          
+          console.log('Configuration:', config);
+          window.Jupiter.init(config);
+          console.log('✅ Widget Jupiter initialisé !');
+          
         } catch (error) {
-          console.error('❌ Erreur lors de l\'initialisation Jupiter:', error);
-          setTimeout(initJupiter, 1000);
+          console.error('❌ Erreur Jupiter:', error);
+          console.error('Stack:', error.stack);
+          
+          // Retry après erreur
+          setTimeout(() => {
+            console.log('🔄 Retry après erreur...');
+            initJupiter();
+          }, 2000);
         }
       } else {
-        console.log('⏳ En attente... Element ou Jupiter non disponible');
-        setTimeout(initJupiter, 500);
+        console.log('⏳ En attente... Retry dans 1s');
+        setTimeout(initJupiter, 1000);
       }
     }
 
-    // Démarrer l'initialisation après le chargement complet
-    window.addEventListener('load', function() {
-      console.log('🚀 Page chargée, démarrage de l\'initialisation Jupiter');
-      setTimeout(initJupiter, 1000);
-    });
-    
-    // Backup: essayer aussi avec DOMContentLoaded
+    // Charger le script Jupiter dynamiquement
+    function loadJupiterScript() {
+      console.log('📥 Chargement du script Jupiter...');
+      
+      const script = document.createElement('script');
+      script.src = 'https://terminal.jup.ag/main-v2.js';
+      script.async = true;
+      
+      script.onload = function() {
+        console.log('✅ Script Jupiter chargé');
+        setTimeout(initJupiter, 500);
+      };
+      
+      script.onerror = function() {
+        console.error('❌ Erreur de chargement du script Jupiter');
+        setTimeout(loadJupiterScript, 3000);
+      };
+      
+      document.head.appendChild(script);
+    }
+
+    // Démarrer le processus
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('📄 DOM chargé');
+      console.log('📄 DOM prêt, chargement Jupiter...');
+      loadJupiterScript();
     });
   </script>
 </body>
